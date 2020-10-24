@@ -41,6 +41,14 @@ import static extension org.eclipse.xtext.EcoreUtil2.*
  */
 class DotAstHelper {
 
+	def static getNumberOfNodes(DotGraph dotGraph) {
+		dotGraph.eAllOfType(NodeId).map[name].toSet.size
+	}
+
+	def static getNumberOfEdges(DotGraph dotGraph) {
+		dotGraph.eAllOfType(EdgeStmtNode).size
+	}
+
 	def static NodeId getNodeId(NodeId nodeId) {
 		val dotGraph = nodeId.getContainerOfType(DotGraph)
 

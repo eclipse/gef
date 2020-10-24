@@ -42,7 +42,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		GraphvizConfigurationDialogTest.class,
 
 		// JUnit Plug-in Tests
-		DotAutoEditTest.class, DotColorListContentAssistLexerTest.class,
+		DotAutoEditTest.class, DotCodeMiningTest.class,
+		DotColorListContentAssistLexerTest.class,
 		DotColorListHighlightingLexerTest.class, DotContentAssist2Test.class,
 		DotContentAssistLexerTest.class, DotContentAssistTest.class,
 		DotEditorDoubleClickingTest.class, DotEditorTest.class,

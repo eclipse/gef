@@ -32,6 +32,7 @@ import org.eclipse.xtext.generator.*
 import org.eclipse.gef.dot.internal.generator.*
 import org.eclipse.xtext.xtext.generator.*
 import org.eclipse.xtext.xtext.generator.model.project.*
+import org.eclipse.xtext.xtext.generator.ui.codemining.CodeMiningFragment
 
 var rootPath = ".."
 var projectName = "org.eclipse.gef.dot"
@@ -193,6 +194,11 @@ Workflow {
 
 			fileWizard = {
 				generate = true
+			}
+
+			fragment = CodeMiningFragment {
+				generateStub = true
+				generateXtendStub = false
 			}
 		}
 		language = StandardLanguage {

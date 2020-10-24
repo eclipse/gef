@@ -526,6 +526,24 @@
 			<newWizardShortcut id="org.eclipse.gef.dot.internal.ui.language.wizard.DotNewFileWizard"/>
 		</perspectiveExtension>
 	</extension>
+		<!-- code mining -->
+	<extension point="org.eclipse.ui.workbench.texteditor.codeMiningProviders">
+		<codeMiningProvider
+			class="org.eclipse.gef.dot.internal.ui.language.DotExecutableExtensionFactory:org.eclipse.jface.text.codemining.ICodeMiningProvider"
+			id="org.eclipse.gef.dot.internal.language.Dot.CodeMiningProvider"
+			label="DOT Codemining">
+			<enabledWhen>
+				<with variable="editorInput">
+					<adapt type="org.eclipse.core.resources.IFile">
+						<test
+							property="org.eclipse.core.resources.contentTypeId"
+							value="org.eclipse.gef.dot.internal.language.Dot.contenttype">
+						</test>
+					</adapt>
+				</with>
+			</enabledWhen>
+		</codeMiningProvider>
+	</extension>
 	<extension
 		point="org.eclipse.ui.views">
 		<category
