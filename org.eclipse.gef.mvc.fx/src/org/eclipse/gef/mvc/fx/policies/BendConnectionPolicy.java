@@ -99,8 +99,6 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	private Point preMoveStartHint = null;
 	private Point preMoveEndHint = null;
 	private boolean isSelectionHorizontal = false;
-	// TODO: remove usePreMoveHints
-	private boolean usePreMoveHints = false;
 	private boolean isNormalizationNeeded = false;
 
 	private List<BendPoint> initialBendPoints = new ArrayList<>();
@@ -229,7 +227,7 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	@Override
 	protected ITransactionalOperation createOperation() {
 		ForwardUndoCompositeOperation fwdOp = new ForwardUndoCompositeOperation(
-				"BendPlusHints");
+				"BendAndRoute");
 		fwdOp.add(new BendVisualOperation(getHost()));
 		return fwdOp;
 	}
@@ -498,7 +496,6 @@ public class BendConnectionPolicy extends AbstractPolicy {
 		selectedIndices.clear();
 		selectedInitialPositions.clear();
 		preMoveBendPoints.clear();
-		usePreMoveHints = true;
 		isNormalizationNeeded = false;
 		super.init();
 		// showAnchors("init:");
@@ -571,21 +568,6 @@ public class BendConnectionPolicy extends AbstractPolicy {
 
 	@Override
 	protected void locallyExecuteOperation() {
-		// locally execute bend operation
-		try {
-			getBendOperation().execute(null, null);
-		} catch (Exception x) {
-			throw new IllegalStateException(x);
-		}
-		// apply hints
-		if (usePreMoveHints) {
-			setNewHints(preMoveStartHint, preMoveEndHint);
-		} else {
-			Point newStartHint = computeStartHint();
-			Point newEndHint = computeEndHint();
-			setNewHints(newStartHint, newEndHint);
-		}
-		// locally execute hints operation
 		try {
 			getBendOperation().execute(null, null);
 		} catch (Exception x) {
@@ -685,7 +667,6 @@ public class BendConnectionPolicy extends AbstractPolicy {
 		if (preMoveBendPoints.isEmpty()) {
 			// first move => we need to normalize upon commit now
 			isNormalizationNeeded = true;
-			usePreMoveHints = false;
 			// save initial selected positions
 			for (int i = 0; i < selectedIndices.size(); i++) {
 				selectedInitialPositions.add(i,
@@ -705,11 +686,10 @@ public class BendConnectionPolicy extends AbstractPolicy {
 		} else {
 			// restore initial pre-move explicit anchors
 			getBendOperation().setFinalBendPoints(preMoveBendPoints);
+			locallyExecuteOperation();
 			// restore initial pre-move hints
 			setNewHints(preMoveStartHint, preMoveEndHint);
-			usePreMoveHints = true;
 			locallyExecuteOperation();
-			usePreMoveHints = false;
 		}
 		// showAnchors("After Restore:");
 
@@ -764,11 +744,9 @@ public class BendConnectionPolicy extends AbstractPolicy {
 			return;
 		}
 
-		// enable hint computation
-		usePreMoveHints = false;
-
 		// execute operation so that changes are applied
 		locallyExecuteOperation();
+		route();
 
 		// determine all connection anchors
 		List<IAnchor> anchors = getConnection().getAnchorsUnmodifiable();
@@ -869,6 +847,7 @@ public class BendConnectionPolicy extends AbstractPolicy {
 				getBendOperation().getFinalBendPoints().remove(index);
 				// apply changes by executing the operation
 				locallyExecuteOperation();
+				route();
 			}
 		}
 	}
@@ -891,6 +870,7 @@ public class BendConnectionPolicy extends AbstractPolicy {
 		// apply changes (if any)
 		if (removed) {
 			locallyExecuteOperation();
+			route();
 		}
 	}
 
@@ -900,6 +880,10 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	 * forwarded to the anchors.
 	 */
 	protected void route() {
+		Point newStartHint = computeStartHint();
+		Point newEndHint = computeEndHint();
+		setNewHints(newStartHint, newEndHint);
+		locallyExecuteOperation();
 	}
 
 	/**
