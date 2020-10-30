@@ -859,17 +859,26 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 			throw new IllegalStateException(
 					"Curve does not have start and end.");
 		}
-		Double[] coordinates = new Double[2 * controlPoints.size()];
+		Double[] coordinates = new Double[2 * controlPoints.size() + 4];
+		List<Point> points = new ArrayList<Point>();
+		ObservableList<Double> curvePoints = curve.getPoints();
+		coordinates[0] = curvePoints.get(0);
+		coordinates[1] = curvePoints.get(1);
+		points.add(this.points.get(0));
 		for (int i = 0; i < controlPoints.size(); i++) {
 			Point cp = controlPoints.get(i);
-			if (!cp.equals(this.points.get(i + 1))) {
-				this.points.set(i + 1, cp);
-			}
+			points.add(cp);
 			Point p = NodeUtils.parentToLocal(curve, cp);
-			coordinates[2 * i] = p.x;
-			coordinates[2 * i + 1] = p.y;
+			coordinates[2 * i + 2] = p.x;
+			coordinates[2 * i + 3] = p.y;
 		}
-		setCurveCoordinates(2, coordinates);
+		coordinates[coordinates.length - 2] = curvePoints
+				.get(curvePoints.size() - 2);
+		coordinates[coordinates.length - 1] = curvePoints
+				.get(curvePoints.size() - 1);
+		points.add(this.points.get(this.points.size() - 1));
+		this.points.setAll(points);
+		setCurveCoordinates(0, coordinates);
 	}
 
 	private void setCurveCoordinates(int index, Double... coordinates) {
