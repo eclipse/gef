@@ -42,6 +42,8 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
@@ -68,7 +70,7 @@ import javafx.scene.transform.Transform;
  * @author anyssen
  *
  */
-public class Traverse extends Group {
+public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 
 	private class AnchorMap {
 
@@ -128,6 +130,10 @@ public class Traverse extends Group {
 			}
 			return oldAnchor;
 		}
+
+		int size() {
+			return anchors.size();
+		}
 	}
 
 	/**
@@ -142,21 +148,16 @@ public class Traverse extends Group {
 	 */
 	private static final String END_ROLE = "end";
 
-	private Polyline curve = new Polyline();
+	private Polyline curve = new Polyline(0, 0, 0, 0);
+	private ObservableList<Point> points = CollectionUtils
+			.observableArrayList(new Point(), new Point());
 	private ObjectProperty<Shape> startDecorationProperty = null;
 	private ObjectProperty<Shape> endDecorationProperty = null;
 
-	private AnchorKey startAnchorKey;
-	private AnchorKey endAnchorKey;
-	private AnchorMap anchorsByKeys = new AnchorMap();
-
-	// TODO: provide a point list as well, which contains the translated
-	// coordinates
-	// of the polyline. This way we would have an identical API to that of
-	// Connection, which allows us to extract an interface.
-	// private ObservableList<Point> points =
-	// CollectionUtils.observableArrayList();
+	private AnchorKey startAnchorKey = new AnchorKey(curve, START_ROLE);
+	private AnchorKey endAnchorKey = new AnchorKey(curve, END_ROLE);
 	private Map<AnchorKey, MapChangeListener<? super AnchorKey, ? super Point>> anchorsPCL = new HashMap<>();
+	private AnchorMap anchorsByKeys = new AnchorMap();
 
 	private ChangeListener<Node> decorationListener = new ChangeListener<Node>() {
 
@@ -186,6 +187,17 @@ public class Traverse extends Group {
 
 	private DoubleProperty clickableAreaWidth = new SimpleDoubleProperty();
 	private Polyline clickableAreaShape = null;
+	private ListChangeListener<Double> coordinatesListener = new ListChangeListener<Double>() {
+
+		@Override
+		public void onChanged(Change<? extends Double> c) {
+			// TODO: We could support translating back coordinate changes to
+			// point changes.
+			throw new IllegalStateException(
+					"Direct manipulation of the curve's (Polyline) coordinates are not supported. Manipulate the points of the Traverse instead; the coordinates will get updated as a consequence.");
+
+		}
+	};
 
 	/**
 	 * Constructs a new {@link Traverse} whose start and end point are set to
@@ -196,13 +208,14 @@ public class Traverse extends Group {
 		// in some cases
 		setAutoSizeChildren(false);
 
-		// set default curve
-		curve = new Polyline();
-		curve.layoutBoundsProperty().addListener(boundsListener);
-		curve.localToParentTransformProperty().addListener(transformListener);
+		// init curve
 		getChildren().add(curve);
 
-		// init start and end points
+		curve.layoutBoundsProperty().addListener(boundsListener);
+		curve.localToParentTransformProperty().addListener(transformListener);
+		curve.getPoints().addListener(coordinatesListener);
+
+		// initialize anchors
 		setStartPoint(new Point());
 		setEndPoint(new Point());
 
@@ -245,13 +258,14 @@ public class Traverse extends Group {
 	 * @param controlPoint
 	 *            The position for the specified control point.
 	 */
+	@Override
 	public void addControlPoint(int index, Point controlPoint) {
 		if (controlPoint == null) {
 			throw new IllegalArgumentException("controlPoint may not be null.");
 		}
-		// convert to local coordinates of curve
-		Point cp = NodeUtils.parentToLocal(curve, controlPoint);
-		addCurveCoordinates(2 * index, cp.x, cp.y);
+		points.add(index + 1, controlPoint);
+		Point p = NodeUtils.parentToLocal(curve, controlPoint);
+		addCurveCoordinates(2 * (index + 1), p.x, p.y);
 	}
 
 	private void addCurveCoordinates(int index, Double... coordinates) {
@@ -284,6 +298,7 @@ public class Traverse extends Group {
 	 * @return A property to control the width of the clickable area of this
 	 *         connection.
 	 */
+	@Override
 	public DoubleProperty clickableAreaWidthProperty() {
 		return clickableAreaWidth;
 	}
@@ -353,6 +368,7 @@ public class Traverse extends Group {
 	 *
 	 * @return The current value of the {@link #clickableAreaWidthProperty()}.
 	 */
+	@Override
 	public double getClickableAreaWidth() {
 		return clickableAreaWidth.get();
 	}
@@ -368,6 +384,7 @@ public class Traverse extends Group {
 	 * @return a {@link Point} representing the control point of the given
 	 *         index.
 	 */
+	@Override
 	public Point getControlPoint(int index) {
 		if (index + 1 >= curve.getPoints().size() / 2 - 1) {
 			// no control points, just start and end points
@@ -386,6 +403,7 @@ public class Traverse extends Group {
 	 * @return A {@link List} containing the control {@link Point}s of this
 	 *         {@link Traverse}.
 	 */
+	@Override
 	public List<Point> getControlPoints() {
 		List<Point> controlPoints = new ArrayList<>();
 		ObservableList<Double> coordinates = curve.getPoints();
@@ -401,6 +419,7 @@ public class Traverse extends Group {
 	 *
 	 * @return The {@link Polyline} which displays the geometry.
 	 */
+	@Override
 	public Polyline getCurve() {
 		return curve;
 	}
@@ -412,22 +431,9 @@ public class Traverse extends Group {
 	 * @return The currently assigned end {@link IAnchor anchor}, or
 	 *         <code>null</code>.
 	 */
+	@Override
 	public IAnchor getEndAnchor() {
-		return anchorsByKeys.get(getEndAnchorKey());
-	}
-
-	/**
-	 * Returns the end {@link AnchorKey} for this {@link Traverse}. An end
-	 * {@link AnchorKey} uses the child curve as its anchored and
-	 * <code>"end"</code> as its role.
-	 *
-	 * @return The end {@link AnchorKey} for this {@link Traverse}.
-	 */
-	protected AnchorKey getEndAnchorKey() {
-		if (endAnchorKey == null) {
-			endAnchorKey = new AnchorKey(curve, END_ROLE);
-		}
-		return endAnchorKey;
+		return anchorsByKeys.get(endAnchorKey);
 	}
 
 	/**
@@ -437,6 +443,7 @@ public class Traverse extends Group {
 	 * @return The end decoration {@link Shape} of this {@link Traverse}, or
 	 *         <code>null</code>.
 	 */
+	@Override
 	public Shape getEndDecoration() {
 		if (endDecorationProperty == null) {
 			return null;
@@ -451,6 +458,7 @@ public class Traverse extends Group {
 	 * @return The end {@link Point} of this {@link Traverse}, or
 	 *         <code>null</code>.
 	 */
+	@Override
 	public Point getEndPoint() {
 		ObservableList<Double> coordinates = curve.getPoints();
 		return NodeUtils.localToParent(curve,
@@ -459,33 +467,38 @@ public class Traverse extends Group {
 	}
 
 	/**
-	 * Returns the {@link Point} at the given index, whithin the coordinate
+	 * Returns the {@link Point} at the given index, within the coordinate
 	 * system of this {@link Traverse}.
 	 *
 	 * @param index
 	 *            The index, for which to retrieve the point.
-	 * @return The {@link Point} at the given index.
+	 * @return The {@link Point} at the given index, within the coordinate
+	 *         system of this {@link Traverse}.
 	 */
 	public Point getPoint(int index) {
-		// TODO: optimize by caching points
-		return getPoints().get(index);
+		if (points == null) {
+			if (index < 0 || index >= curve.getPoints().size()) {
+				throw new IndexOutOfBoundsException("Index " + index
+						+ " is out of bounds. This traverse has "
+						+ this.curve.getPoints().size() / 2);
+			}
+			return NodeUtils.localToParent(curve,
+					new Point(curve.getPoints().get(index * 2),
+							curve.getPoints().get(index * 2 + 1)));
+		}
+		return points.get(index);
 	}
 
 	/**
 	 * Returns the {@link Point}s constituting this {@link Traverse} within its
 	 * coordinate system in the order: start point, control points, end point.
 	 *
-	 * @return The {@link Point}s constituting this {@link Traverse}.
+	 * @return The {@link Point}s constituting this {@link Traverse}, within the
+	 *         coordinate system of this {@link Traverse}.
 	 */
-	public List<Point> getPoints() {
-		// TODO: optimize by caching points
-		List<Point> points = new ArrayList<Point>();
-		List<Double> coordinates = curve.getPoints();
-		for (int i = 0; i < coordinates.size() / 2; i++) {
-			points.add(NodeUtils.localToParent(curve, new Point(
-					coordinates.get(2 * i), coordinates.get(2 * i + 1))));
-		}
-		return points;
+	@Override
+	public ObservableList<Point> getPointsUnmodifiable() {
+		return FXCollections.unmodifiableObservableList(points);
 	}
 
 	/**
@@ -495,22 +508,9 @@ public class Traverse extends Group {
 	 * @return The currently assigned start {@link IAnchor anchor}, or
 	 *         <code>null</code>.
 	 */
+	@Override
 	public IAnchor getStartAnchor() {
-		return anchorsByKeys.get(getStartAnchorKey());
-	}
-
-	/**
-	 * Returns the start {@link AnchorKey} for this {@link Traverse}. A start
-	 * {@link AnchorKey} uses the child curve as its anchored and
-	 * <code>"start"</code> as its role.
-	 *
-	 * @return The start {@link AnchorKey} for this {@link Traverse}.
-	 */
-	protected AnchorKey getStartAnchorKey() {
-		if (startAnchorKey == null) {
-			startAnchorKey = new AnchorKey(curve, START_ROLE);
-		}
-		return startAnchorKey;
+		return anchorsByKeys.get(startAnchorKey);
 	}
 
 	/**
@@ -520,6 +520,7 @@ public class Traverse extends Group {
 	 * @return The start decoration {@link Node } of this {@link Traverse}, or
 	 *         <code>null</code>.
 	 */
+	@Override
 	public Shape getStartDecoration() {
 		if (startDecorationProperty == null) {
 			return null;
@@ -534,6 +535,7 @@ public class Traverse extends Group {
 	 * @return The start {@link Point} of this {@link Traverse}, or
 	 *         <code>null</code>.
 	 */
+	@Override
 	public Point getStartPoint() {
 		ObservableList<Double> coordinates = curve.getPoints();
 		return NodeUtils.localToParent(curve,
@@ -549,6 +551,7 @@ public class Traverse extends Group {
 	 * @return <code>true</code> if the anchor is connected, <code>false</code>
 	 *         otherwise.
 	 */
+	@Override
 	public boolean isConnected(IAnchor anchor) {
 		return anchor != null && anchor.getAnchorage() != null
 				&& anchor.getAnchorage() != this;
@@ -563,6 +566,7 @@ public class Traverse extends Group {
 	 *         {@link #getEndAnchor() end anchor} is bound to an anchorage,
 	 *         otherwise <code>false</code>.
 	 */
+	@Override
 	public boolean isEndConnected() {
 		return isConnected(getEndAnchor());
 	}
@@ -576,6 +580,7 @@ public class Traverse extends Group {
 	 *         {@link #getStartAnchor() start anchor} is bound to an anchorage,
 	 *         otherwise <code>false</code>.
 	 */
+	@Override
 	public boolean isStartConnected() {
 		return isConnected(getStartAnchor());
 	}
@@ -687,19 +692,17 @@ public class Traverse extends Group {
 	 */
 	protected void refreshDynamicAnchors() {
 		ObservableList<Double> coordinates = curve.getPoints();
-		if (coordinates.size() < 4) {
+		if (anchorsByKeys.size() < 2) {
 			return;
 		}
-
 		for (int i = 0; i < 2; i++) {
 			IAnchor anchor = anchorsByKeys.get(i);
-			AnchorKey anchorKey = i == 0 ? getStartAnchorKey()
-					: getEndAnchorKey();
+			AnchorKey anchorKey = i == 0 ? startAnchorKey : endAnchorKey;
 			if (anchor instanceof DynamicAnchor) {
 				Point refPoint = null;
 				if (coordinates.size() == 4) {
-					AnchorKey oppositeAnchorKey = i == 0 ? getEndAnchorKey()
-							: getStartAnchorKey();
+					AnchorKey oppositeAnchorKey = i == 0 ? endAnchorKey
+							: startAnchorKey;
 					IAnchor oppositeAnchor = anchorsByKeys
 							.get(oppositeAnchorKey);
 					Node opppsiteAnchorage = oppositeAnchor.getAnchorage();
@@ -759,6 +762,7 @@ public class Traverse extends Group {
 	 * @param index
 	 *            The control index specifying which control point to remove.
 	 */
+	@Override
 	public void removeControlPoint(int index) {
 		curve.getPoints().remove(2 * (index + 1), 2 * (index + 1) + 2);
 	}
@@ -814,6 +818,7 @@ public class Traverse extends Group {
 	 *            The new value of the {@link #clickableAreaWidthProperty()
 	 *            clickable area width} property.
 	 */
+	@Override
 	public void setClickableAreaWidth(double clickableAreaWidth) {
 		this.clickableAreaWidth.set(clickableAreaWidth);
 	}
@@ -828,7 +833,15 @@ public class Traverse extends Group {
 	 *            The new control {@link Point} for the respective index within
 	 *            local coordinates of the {@link Traverse}.
 	 */
+	@Override
 	public void setControlPoint(int index, Point controlPoint) {
+		if (getStartAnchor() == null || getEndAnchor() == null) {
+			throw new IllegalStateException(
+					"Curve does not have start and end.");
+		}
+		if (!controlPoint.equals(points.get(index + 1))) {
+			points.set(index + 1, controlPoint);
+		}
 		Point p = NodeUtils.parentToLocal(curve, controlPoint);
 		this.setCurveCoordinates(2 * (index + 1), p.x, p.y);
 	}
@@ -840,19 +853,23 @@ public class Traverse extends Group {
 	 * @param controlPoints
 	 *            The new control {@link Point}s for this {@link Traverse}.
 	 */
+	@Override
 	public void setControlPoints(List<Point> controlPoints) {
-		Double[] coordinates = new Double[2 * controlPoints.size() + 4];
-		ObservableList<Double> points = curve.getPoints();
-		coordinates[0] = points.get(0);
-		coordinates[1] = points.get(1);
-		for (int i = 0; i < controlPoints.size(); i++) {
-			Point cp = NodeUtils.parentToLocal(curve, controlPoints.get(i));
-			coordinates[2 * i + 2] = cp.x;
-			coordinates[2 * i + 3] = cp.y;
+		if (anchorsByKeys.size() != 2) {
+			throw new IllegalStateException(
+					"Curve does not have start and end.");
 		}
-		coordinates[coordinates.length - 2] = points.get(points.size() - 2);
-		coordinates[coordinates.length - 1] = points.get(points.size() - 1);
-		setCurveCoordinates(0, coordinates);
+		Double[] coordinates = new Double[2 * controlPoints.size()];
+		for (int i = 0; i < controlPoints.size(); i++) {
+			Point cp = controlPoints.get(i);
+			if (!cp.equals(this.points.get(i + 1))) {
+				this.points.set(i + 1, cp);
+			}
+			Point p = NodeUtils.parentToLocal(curve, cp);
+			coordinates[2 * i] = p.x;
+			coordinates[2 * i + 1] = p.y;
+		}
+		setCurveCoordinates(2, coordinates);
 	}
 
 	private void setCurveCoordinates(int index, Double... coordinates) {
@@ -862,6 +879,12 @@ public class Traverse extends Group {
 		// change to
 		// update only a subset of the coordinates at once is not possible.
 		ObservableList<Double> points = curve.getPoints();
+		// TODO: disable coordinates listener (if present) and update points
+		// array to minimize changes (otherwise a (x,y)-coordinate change would
+		// lead to two point changes)
+		if (coordinatesListener != null) {
+			curve.getPoints().removeListener(coordinatesListener);
+		}
 		if (coordinates.length > points.size() / 2) {
 			Double[] coords = new Double[Math.max(index + coordinates.length,
 					points.size())];
@@ -883,6 +906,9 @@ public class Traverse extends Group {
 				}
 			}
 		}
+		if (coordinatesListener != null) {
+			curve.getPoints().addListener(coordinatesListener);
+		}
 	}
 
 	/**
@@ -891,11 +917,12 @@ public class Traverse extends Group {
 	 * @param anchor
 	 *            The new end {@link IAnchor} for this {@link Traverse}.
 	 */
+	@Override
 	public void setEndAnchor(IAnchor anchor) {
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
-		setAnchor(getEndAnchorKey(), anchor);
+		setAnchor(endAnchorKey, anchor);
 	}
 
 	/**
@@ -905,6 +932,7 @@ public class Traverse extends Group {
 	 * @param decoration
 	 *            The new end decoration {@link Node} for this {@link Traverse}.
 	 */
+	@Override
 	public void setEndDecoration(Shape decoration) {
 		endDecorationProperty().set(decoration);
 	}
@@ -918,6 +946,7 @@ public class Traverse extends Group {
 	 *            The new end {@link Point} within local coordinates of the
 	 *            {@link Traverse}.
 	 */
+	@Override
 	public void setEndPoint(Point endPoint) {
 		if (endPoint == null) {
 			throw new IllegalArgumentException("endPoint may not be null.");
@@ -936,6 +965,7 @@ public class Traverse extends Group {
 	 * @throws IllegalArgumentException
 	 *             when less than 2 {@link IAnchor}s are given.
 	 */
+	@Override
 	public void setPoints(List<Point> points) {
 		if (points.size() < 2) {
 			throw new IllegalArgumentException(
@@ -959,11 +989,12 @@ public class Traverse extends Group {
 	 * @param anchor
 	 *            The new start {@link IAnchor} for this {@link Traverse}.
 	 */
+	@Override
 	public void setStartAnchor(IAnchor anchor) {
 		if (anchor == null) {
 			throw new IllegalArgumentException("anchor may not be null.");
 		}
-		setAnchor(getStartAnchorKey(), anchor);
+		setAnchor(startAnchorKey, anchor);
 	}
 
 	/**
@@ -974,6 +1005,7 @@ public class Traverse extends Group {
 	 *            The new start decoration {@link Node} for this
 	 *            {@link Traverse}.
 	 */
+	@Override
 	public void setStartDecoration(Shape decoration) {
 		startDecorationProperty().set(decoration);
 	}
@@ -987,6 +1019,7 @@ public class Traverse extends Group {
 	 *            The new start {@link Point} within local coordinates of the
 	 *            {@link Traverse}.
 	 */
+	@Override
 	public void setStartPoint(Point startPoint) {
 		if (startPoint == null) {
 			throw new IllegalArgumentException("startPoint may not be null.");
@@ -1018,10 +1051,13 @@ public class Traverse extends Group {
 
 	private void updateCurvePoint(AnchorKey anchorKey) {
 		IAnchor anchor = anchorsByKeys.get(anchorKey);
-		int index = anchorKey == getStartAnchorKey() ? 0
+		int index = anchorKey == startAnchorKey ? 0
 				: curve.getPoints().size() / 2 - 1;
 		Point point = anchor.getPosition(anchorKey);
+		Point p = NodeUtils.localToParent(curve, point);
+		if (!p.equals(points.get(index))) {
+			points.set(index, p);
+		}
 		setCurveCoordinates(2 * index, point.x, point.y);
 	}
-
 }
