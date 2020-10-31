@@ -16,7 +16,6 @@ package org.eclipse.gef.dot.internal.ui.language.findreferences;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.gef.dot.internal.language.DotAstHelper;
 import org.eclipse.gef.dot.internal.language.dot.NodeId;
 import org.eclipse.gef.dot.internal.ui.language.DotActivator;
@@ -52,46 +51,29 @@ public class DotReferenceFinder extends ReferenceFinder {
 		return getInstance();
 	}
 
-	/**
-	 * Using the @Override notation leads to a compile error on some (e.g NEON,
-	 * OXYGEN, PHOTON, ...) platforms, since this internal Xtext API has been
-	 * changed over time.
-	 *
-	 * see
-	 * https://github.com/eclipse/xtext-core/commit/69064ac12f0144b60d8c7511d41c834db44a67f2
-	 *
-	 * This method will be invoked on ...LUNA, MARS, platforms
-	 */
-	public void findReferences(TargetURIs targetURIs, Resource resource,
-			Acceptor acceptor, IProgressMonitor monitor) {
-		// add DOT specific references
-		for (URI targetURI : targetURIs) {
-			EObject target = resource.getEObject(targetURI.fragment());
-			// currently, only a selection of a nodeId is supported
-			if (target instanceof NodeId) {
-				acceptor.accept(target, targetURI, null, -1, target, targetURI);
-				NodeId selectedNodeId = (NodeId) target;
-				for (NodeId source : DotAstHelper
-						.getAllNodeIds(selectedNodeId)) {
-					URI sourceURI = EcoreUtil2
-							.getPlatformResourceOrNormalizedURI(source);
-					acceptor.accept(source, sourceURI, null, -1, target,
-							targetURI);
-				}
-			}
-		}
-	}
-
-	/**
-	 * This method will be invoked on NEON, OXYGEN, PHOTON... platforms
-	 */
+	@Override
 	public void findReferences(Predicate<URI> targetURIs, EObject scope,
 			Acceptor acceptor, IProgressMonitor monitor) {
 
 		if (targetURIs instanceof TargetURIs) {
-			findReferences((TargetURIs) targetURIs, scope.eResource(), acceptor,
-					monitor);
+			// add DOT specific references
+			for (URI targetURI : (TargetURIs) targetURIs) {
+				EObject target = scope.eResource()
+						.getEObject(targetURI.fragment());
+				// currently, only a selection of a nodeId is supported
+				if (target instanceof NodeId) {
+					acceptor.accept(target, targetURI, null, -1, target,
+							targetURI);
+					NodeId selectedNodeId = (NodeId) target;
+					for (NodeId source : DotAstHelper
+							.getAllNodeIds(selectedNodeId)) {
+						URI sourceURI = EcoreUtil2
+								.getPlatformResourceOrNormalizedURI(source);
+						acceptor.accept(source, sourceURI, null, -1, target,
+								targetURI);
+					}
+				}
+			}
 		}
-
 	}
 }
