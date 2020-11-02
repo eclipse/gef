@@ -95,15 +95,16 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	 */
 	protected static final double DEFAULT_SEGMENT_OVERLAY_THRESHOLD = 6;
 
-	private List<Point> selectedInitialPositions = new ArrayList<>();
-	private Point preMoveStartHint = null;
-	private Point preMoveEndHint = null;
-	private boolean isSelectionHorizontal = false;
+	// required for the content operation to be chained upon commit
+	private List<BendPoint> initialBendPoints = new ArrayList<>();
+
 	private boolean isNormalizationNeeded = false;
 
-	private List<BendPoint> initialBendPoints = new ArrayList<>();
+	private Point preMoveStartHint = null;
+	private Point preMoveEndHint = null;
 	private List<BendPoint> preMoveBendPoints = new ArrayList<>();
 	private List<Integer> selectedIndices = new ArrayList<>();
+	private List<Point> selectedIndicesInitialPositions = new ArrayList<>();
 
 	/**
 	 * Determines if the anchor at the given explicit index can be replaced with
@@ -488,20 +489,19 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	 *         coordinate system of the {@link #getConnection()}.
 	 */
 	public List<Point> getSelectedInitialPositions() {
-		return selectedInitialPositions;
+		return selectedIndicesInitialPositions;
 	}
 
 	@Override
 	public void init() {
 		selectedIndices.clear();
-		selectedInitialPositions.clear();
-		preMoveBendPoints.clear();
+		selectedIndicesInitialPositions.clear();
 		isNormalizationNeeded = false;
+
 		super.init();
+
 		// showAnchors("init:");
 		initialBendPoints = getCurrentBendPoints();
-		preMoveStartHint = getHost().getVisual().getStartPointHint();
-		preMoveEndHint = getHost().getVisual().getEndPointHint();
 	}
 
 	/**
@@ -551,6 +551,13 @@ public class BendConnectionPolicy extends AbstractPolicy {
 				getPoint(overlainExplicitAnchorIndex)) <= getOverlayThreshold();
 	}
 
+	private boolean isOrthogonal() {
+		int numPoints = selectedIndices.size();
+		boolean isOrtho = numPoints == 2
+				&& getConnection().getRouter() instanceof OrthogonalRouter;
+		return isOrtho;
+	}
+
 	/**
 	 * Returns <code>true</code> if the selected points are on a horizontal
 	 * line. Otherwise returns <code>false</code>.
@@ -559,7 +566,13 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	 *         line, otherwise <code>false</code>.
 	 */
 	public boolean isSelectionHorizontal() {
-		return isSelectionHorizontal;
+		// determine selection status
+		if (isOrthogonal()) {
+			double y0 = selectedIndicesInitialPositions.get(0).y;
+			double y1 = selectedIndicesInitialPositions.get(1).y;
+			return isUnpreciseEquals(y0, y1);
+		}
+		return false;
 	}
 
 	private boolean isUnpreciseEquals(double y0, double y1) {
@@ -656,41 +669,14 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	 */
 	public void move(Point initialMouseInScene, Point currentMouseInScene) {
 		checkInitialized();
-		// showAnchors("Before Restore:");
-
-		// determine selection status
-		int numPoints = selectedIndices.size();
-		boolean isOrtho = numPoints == 2
-				&& getConnection().getRouter() instanceof OrthogonalRouter;
+		isNormalizationNeeded = true;
 
 		// save/restore explicit anchors
-		if (preMoveBendPoints.isEmpty()) {
-			// first move => we need to normalize upon commit now
-			isNormalizationNeeded = true;
-			// save initial selected positions
-			for (int i = 0; i < selectedIndices.size(); i++) {
-				selectedInitialPositions.add(i,
-						getPoint(selectedIndices.get(i)));
-			}
-			// save initial pre-move explicit anchors
-			preMoveBendPoints.addAll(getBendOperation().getFinalBendPoints());
-			// determine selection segment orientation
-			if (isOrtho) {
-				double y0 = selectedInitialPositions.get(0).y;
-				double y1 = selectedInitialPositions.get(1).y;
-				isSelectionHorizontal = isUnpreciseEquals(y0, y1);
-			}
-			// save initial pre-move hints
-			preMoveStartHint = computeStartHint();
-			preMoveEndHint = computeEndHint();
-		} else {
-			// restore initial pre-move explicit anchors
-			getBendOperation().setFinalBendPoints(preMoveBendPoints);
-			locallyExecuteOperation();
-			// restore initial pre-move hints
-			setNewHints(preMoveStartHint, preMoveEndHint);
-			locallyExecuteOperation();
-		}
+		// showAnchors("Before Restore:");
+		getBendOperation().setFinalBendPoints(preMoveBendPoints);
+		locallyExecuteOperation();
+		setNewHints(preMoveStartHint, preMoveEndHint);
+		locallyExecuteOperation();
 		// showAnchors("After Restore:");
 
 		// compensate the movement of the local coordinate system w.r.t. the
@@ -705,8 +691,8 @@ public class BendConnectionPolicy extends AbstractPolicy {
 						.getNegated());
 
 		// constrain movement in one direction for segment based connections
-		if (isOrtho) {
-			if (isSelectionHorizontal) {
+		if (isOrthogonal()) {
+			if (isSelectionHorizontal()) {
 				mouseDeltaInLocal.x = 0;
 			} else {
 				mouseDeltaInLocal.y = 0;
@@ -715,7 +701,7 @@ public class BendConnectionPolicy extends AbstractPolicy {
 
 		// update positions
 		for (int i = 0; i < selectedIndices.size(); i++) {
-			Point selectedPointCurrentPositionInLocal = selectedInitialPositions
+			Point selectedPointCurrentPositionInLocal = selectedIndicesInitialPositions
 					.get(i).getTranslated(mouseDeltaInLocal);
 
 			int explicitAnchorIndex = selectedIndices.get(i);
@@ -898,6 +884,13 @@ public class BendConnectionPolicy extends AbstractPolicy {
 		checkInitialized();
 		// save selected anchor handles
 		selectedIndices.add(explicitAnchorIndex);
+		selectedIndicesInitialPositions.add(getPoint(explicitAnchorIndex));
+
+		// after last call to select, the bend points are final
+		preMoveStartHint = getHost().getVisual().getStartPointHint();
+		preMoveEndHint = getHost().getVisual().getEndPointHint();
+		preMoveBendPoints.clear();
+		preMoveBendPoints.addAll(getBendOperation().getFinalBendPoints());
 	}
 
 	/**
@@ -1022,6 +1015,9 @@ public class BendConnectionPolicy extends AbstractPolicy {
 	 */
 	private boolean testAndRemoveSegmentOverlay(
 			int[] overlainPointIndicesRelativeToSelection) {
+
+		boolean isSelectionHorizontal = isSelectionHorizontal();
+
 		// check that positions are present for the given indices within the
 		// connection. if not all are present, return without applying any
 		// modifications.
