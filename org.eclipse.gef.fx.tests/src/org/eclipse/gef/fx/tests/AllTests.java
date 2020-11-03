@@ -19,7 +19,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ ConnectionTests.class, GeometryNodeTests.class, GeometryConversionTests.class,
-		OrthogonalProjectionStrategyTests.class, NodeUtilsTests.class, FXCanvasExTests.class})
+		OrthogonalProjectionStrategyTests.class, NodeUtilsTests.class, FXCanvasExTests.class, TraverseTests.class})
 public class AllTests {
 
 }

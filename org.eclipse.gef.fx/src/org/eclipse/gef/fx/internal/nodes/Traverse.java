@@ -269,7 +269,9 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 	}
 
 	private void addCurveCoordinates(int index, Double... coordinates) {
+		curve.getPoints().removeListener(coordinatesListener);
 		curve.getPoints().addAll(index, Arrays.asList(coordinates));
+		curve.getPoints().addListener(coordinatesListener);
 	}
 
 	// from AbstractInterpolator
@@ -340,7 +342,7 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 					MapChangeListener.Change<? extends AnchorKey, ? extends Point> change) {
 				if (change.getKey().equals(anchorKey)) {
 					if (change.wasAdded() && change.wasRemoved()) {
-						updateCurvePoint(change.getKey());
+						updateCurve(change.getKey());
 						refreshDynamicAnchors();
 					}
 				}
@@ -386,14 +388,7 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 	 */
 	@Override
 	public Point getControlPoint(int index) {
-		if (index + 1 >= curve.getPoints().size() / 2 - 1) {
-			// no control points, just start and end points
-			return null;
-		}
-		ObservableList<Double> coordinates = curve.getPoints();
-		return NodeUtils.localToParent(curve,
-				new Point(coordinates.get(2 * (index + 1)),
-						coordinates.get(2 * (index + 1) + 1)));
+		return points.get(index + 1);
 	}
 
 	/**
@@ -405,13 +400,7 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 	 */
 	@Override
 	public List<Point> getControlPoints() {
-		List<Point> controlPoints = new ArrayList<>();
-		ObservableList<Double> coordinates = curve.getPoints();
-		for (int i = 1; i < coordinates.size() / 2 - 1; i++) {
-			controlPoints.add(NodeUtils.localToParent(curve, new Point(
-					coordinates.get(2 * i), coordinates.get(2 * i + 1))));
-		}
-		return controlPoints;
+		return points.subList(1, points.size() - 1);
 	}
 
 	/**
@@ -460,10 +449,7 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 	 */
 	@Override
 	public Point getEndPoint() {
-		ObservableList<Double> coordinates = curve.getPoints();
-		return NodeUtils.localToParent(curve,
-				new Point(coordinates.get(coordinates.size() - 2),
-						coordinates.get(coordinates.size() - 1)));
+		return points.get(points.size() - 1);
 	}
 
 	/**
@@ -475,17 +461,8 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 	 * @return The {@link Point} at the given index, within the coordinate
 	 *         system of this {@link Traverse}.
 	 */
+	@Override
 	public Point getPoint(int index) {
-		if (points == null) {
-			if (index < 0 || index >= curve.getPoints().size()) {
-				throw new IndexOutOfBoundsException("Index " + index
-						+ " is out of bounds. This traverse has "
-						+ this.curve.getPoints().size() / 2);
-			}
-			return NodeUtils.localToParent(curve,
-					new Point(curve.getPoints().get(index * 2),
-							curve.getPoints().get(index * 2 + 1)));
-		}
 		return points.get(index);
 	}
 
@@ -537,22 +514,10 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 	 */
 	@Override
 	public Point getStartPoint() {
-		ObservableList<Double> coordinates = curve.getPoints();
-		return NodeUtils.localToParent(curve,
-				new Point(coordinates.get(0), coordinates.get(1)));
+		return points.get(0);
 	}
 
-	/**
-	 * Return <code>true</code> in case the anchor is bound to an anchorage
-	 * unequal to this connection.
-	 *
-	 * @param anchor
-	 *            The anchor to test
-	 * @return <code>true</code> if the anchor is connected, <code>false</code>
-	 *         otherwise.
-	 */
-	@Override
-	public boolean isConnected(IAnchor anchor) {
+	private boolean isConnected(IAnchor anchor) {
 		return anchor != null && anchor.getAnchorage() != null
 				&& anchor.getAnchorage() != this;
 	}
@@ -691,7 +656,6 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 	 * Refreshes the reference points of dynamic (start and end) anchors.
 	 */
 	protected void refreshDynamicAnchors() {
-		ObservableList<Double> coordinates = curve.getPoints();
 		if (anchorsByKeys.size() < 2) {
 			return;
 		}
@@ -699,22 +663,23 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 			IAnchor anchor = anchorsByKeys.get(i);
 			AnchorKey anchorKey = i == 0 ? startAnchorKey : endAnchorKey;
 			if (anchor instanceof DynamicAnchor) {
+				ObservableList<Double> coordinates = curve.getPoints();
 				Point refPoint = null;
 				if (coordinates.size() == 4) {
 					AnchorKey oppositeAnchorKey = i == 0 ? endAnchorKey
 							: startAnchorKey;
 					IAnchor oppositeAnchor = anchorsByKeys
 							.get(oppositeAnchorKey);
-					Node opppsiteAnchorage = oppositeAnchor.getAnchorage();
+					Node oppositeAnchorage = oppositeAnchor.getAnchorage();
 					if (oppositeAnchor instanceof DynamicAnchor
-							&& opppsiteAnchorage != null) {
+							&& oppositeAnchorage != null) {
 						// if we have no way points we use the anchorage center
 						// of the opposite anchor to make the computation stable
 						refPoint = NodeUtils.sceneToLocal(curve,
-								NodeUtils.localToScene(opppsiteAnchorage,
+								NodeUtils.localToScene(oppositeAnchorage,
 										NodeUtils
 												.getShapeBounds(
-														opppsiteAnchorage)
+														oppositeAnchorage)
 												.getCenter()));
 					}
 				}
@@ -733,7 +698,7 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 								AnchoredReferencePoint.class);
 				if (!refPoint.equals(anchoredReferencePoint.get())) {
 					anchoredReferencePoint.set(refPoint);
-					updateCurvePoint(anchorKey);
+					updateCurve(anchorKey);
 				}
 			}
 		}
@@ -752,7 +717,8 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 	 * Removes all control points of this {@link Traverse}.
 	 */
 	public void removeAllControlPoints() {
-		curve.getPoints().remove(2, curve.getPoints().size() - 2);
+		points.remove(1, points.size() - 1);
+		removeCoordinates(2, curve.getPoints().size() - 2);
 	}
 
 	/**
@@ -764,7 +730,26 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 	 */
 	@Override
 	public void removeControlPoint(int index) {
-		curve.getPoints().remove(2 * (index + 1), 2 * (index + 1) + 2);
+		points.remove(index + 1);
+		removeCoordinates(2 * (index + 1), 2 * (index + 1) + 2);
+	}
+
+	private void removeCoordinates(int from, int to) {
+		ObservableList<Double> coordinates = curve.getPoints();
+		coordinates.removeListener(coordinatesListener);
+		coordinates.remove(from, to);
+		coordinates.addListener(coordinatesListener);
+	}
+
+	private void setAllCoordinates(Double... coordinates) {
+		ObservableList<Double> points = curve.getPoints();
+		if (coordinatesListener != null) {
+			points.removeListener(coordinatesListener);
+		}
+		points.setAll(coordinates);
+		if (coordinatesListener != null) {
+			points.addListener(coordinatesListener);
+		}
 	}
 
 	/**
@@ -804,7 +789,7 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 		anchor.attach(anchorKey);
 
 		// update position
-		updateCurvePoint(anchorKey);
+		updateCurve(anchorKey);
 		registerPCL(anchorKey, anchor);
 		refreshDynamicAnchors();
 		return anchor;
@@ -843,7 +828,7 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 			points.set(index + 1, controlPoint);
 		}
 		Point p = NodeUtils.parentToLocal(curve, controlPoint);
-		this.setCurveCoordinates(2 * (index + 1), p.x, p.y);
+		this.setCoordinates(2 * (index + 1), p.x, p.y);
 	}
 
 	/**
@@ -861,6 +846,7 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 		}
 		Double[] coordinates = new Double[2 * controlPoints.size() + 4];
 		List<Point> points = new ArrayList<Point>();
+
 		ObservableList<Double> curvePoints = curve.getPoints();
 		coordinates[0] = curvePoints.get(0);
 		coordinates[1] = curvePoints.get(1);
@@ -869,8 +855,8 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 			Point cp = controlPoints.get(i);
 			points.add(cp);
 			Point p = NodeUtils.parentToLocal(curve, cp);
-			coordinates[2 * i + 2] = p.x;
-			coordinates[2 * i + 3] = p.y;
+			coordinates[2 * (i + 1)] = p.x;
+			coordinates[2 * (i + 1) + 1] = p.y;
 		}
 		coordinates[coordinates.length - 2] = curvePoints
 				.get(curvePoints.size() - 2);
@@ -878,10 +864,10 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 				.get(curvePoints.size() - 1);
 		points.add(this.points.get(this.points.size() - 1));
 		this.points.setAll(points);
-		setCurveCoordinates(0, coordinates);
+		setAllCoordinates(coordinates);
 	}
 
-	private void setCurveCoordinates(int index, Double... coordinates) {
+	private void setCoordinates(int index, Double... coordinates) {
 		// XXX: We try to do the update as minimal as possible here, so only
 		// relevant
 		// listeners will react and lead to updates; Unfortunately, an atomic
@@ -894,7 +880,7 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 		if (coordinatesListener != null) {
 			curve.getPoints().removeListener(coordinatesListener);
 		}
-		if (coordinates.length > points.size() / 2) {
+		if (index + coordinates.length > points.size()) {
 			Double[] coords = new Double[Math.max(index + coordinates.length,
 					points.size())];
 			int i = 0;
@@ -1058,7 +1044,7 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 		}
 	}
 
-	private void updateCurvePoint(AnchorKey anchorKey) {
+	private void updateCurve(AnchorKey anchorKey) {
 		IAnchor anchor = anchorsByKeys.get(anchorKey);
 		int index = anchorKey == startAnchorKey ? 0
 				: curve.getPoints().size() / 2 - 1;
@@ -1067,6 +1053,6 @@ public class Traverse extends Group implements IBendableCurve<Polyline, Shape> {
 		if (!p.equals(points.get(index))) {
 			points.set(index, p);
 		}
-		setCurveCoordinates(2 * index, point.x, point.y);
+		setCoordinates(2 * index, point.x, point.y);
 	}
 }

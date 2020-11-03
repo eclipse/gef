@@ -127,6 +127,16 @@ public interface IBendableCurve<C extends Node, D extends Node> {
 	Point getEndPoint();
 
 	/**
+	 * Returns the point at the specified index.
+	 *
+	 * @param index
+	 *            The index for which to return the point.
+	 * @return The {@link Point} in local coordinate of this
+	 *         {@link IBendableCurve}.
+	 */
+	Point getPoint(int index);
+
+	/**
 	 * Returns the list of points making up this {@link IBendableCurve}.
 	 *
 	 * @return The list of points.
@@ -162,17 +172,21 @@ public interface IBendableCurve<C extends Node, D extends Node> {
 	Point getStartPoint();
 
 	/**
-	 * Return <code>true</code> in case the anchor is bound to an anchorage
-	 * unequal to this connection.
+	 * Return <code>true</code> in case the point at the given index is bound to
+	 * an anchorage unequal to this {@link IBendableCurve}.
 	 *
-	 * @param anchor
-	 *            The anchor to test
+	 * @param index
+	 *            The index to test
 	 * @return <code>true</code> if the anchor is connected, <code>false</code>
 	 *         otherwise.
 	 */
-	default boolean isConnected(IAnchor anchor) {
-		return anchor != null && anchor.getAnchorage() != null
-				&& anchor.getAnchorage() != this;
+	default boolean isConnected(int index) {
+		if (index == 0) {
+			return isStartConnected();
+		} else if (index == getPointsUnmodifiable().size() - 1) {
+			return isEndConnected();
+		}
+		return false;
 	}
 
 	/**
