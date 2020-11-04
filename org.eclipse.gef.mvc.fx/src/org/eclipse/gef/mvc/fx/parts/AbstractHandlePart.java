@@ -15,9 +15,10 @@ package org.eclipse.gef.mvc.fx.parts;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.gef.fx.anchors.IAnchor;
+import org.eclipse.gef.fx.internal.nodes.IBendableCurve;
 import org.eclipse.gef.fx.listeners.VisualChangeListener;
 import org.eclipse.gef.fx.nodes.Connection;
+import org.eclipse.gef.geometry.planar.Point;
 
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Bounds;
@@ -32,6 +33,7 @@ import javafx.scene.transform.Transform;
  * @param <V>
  *            The visual {@link Node} used by this {@link AbstractHandlePart}.
  */
+@SuppressWarnings("restriction")
 abstract public class AbstractHandlePart<V extends Node>
 		extends AbstractVisualPart<V> implements IHandlePart<V> {
 
@@ -41,9 +43,9 @@ abstract public class AbstractHandlePart<V extends Node>
 	// one for each anchorage
 	private final Map<IVisualPart<? extends Node>, VisualChangeListener> visualChangeListeners = new HashMap<>();
 
-	private ListChangeListener<IAnchor> geometryListener = new ListChangeListener<IAnchor>() {
+	private ListChangeListener<Point> geometryListener = new ListChangeListener<Point>() {
 		@Override
-		public void onChanged(ListChangeListener.Change<? extends IAnchor> c) {
+		public void onChanged(ListChangeListener.Change<? extends Point> c) {
 			refreshVisual();
 		}
 	};
@@ -63,6 +65,7 @@ abstract public class AbstractHandlePart<V extends Node>
 				"IHandleParts do not support children");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void doAttachToAnchorageVisual(
 			IVisualPart<? extends Node> anchorage, String role) {
@@ -104,13 +107,17 @@ abstract public class AbstractHandlePart<V extends Node>
 			// connection's geometry changes, too
 			if (anchorageVisual instanceof Connection) {
 				Connection connection = (Connection) anchorageVisual;
-				connection.anchorsUnmodifiableProperty()
+				connection.getPointsUnmodifiable()
 						.addListener(geometryListener);
+			} else if (anchorageVisual instanceof IBendableCurve) {
+				((IBendableCurve<? extends Node, ? extends Node>) anchorageVisual)
+						.getPointsUnmodifiable().addListener(geometryListener);
 			}
 		}
 		anchorageLinkCount.put(anchorage, count + 1);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void doDetachFromAnchorageVisual(
 			IVisualPart<? extends Node> anchorage, String role) {
@@ -125,7 +132,12 @@ abstract public class AbstractHandlePart<V extends Node>
 			visualChangeListeners.remove(anchorage).unregister();
 			Node anchorageVisual = anchorage.getVisual();
 			if (anchorageVisual instanceof Connection) {
-				((Connection) anchorageVisual).anchorsUnmodifiableProperty()
+				Connection connection = (Connection) anchorageVisual;
+				connection.getPointsUnmodifiable()
+						.removeListener(geometryListener);
+			} else if (anchorageVisual instanceof IBendableCurve) {
+				((IBendableCurve<? extends Node, ? extends Node>) anchorageVisual)
+						.getPointsUnmodifiable()
 						.removeListener(geometryListener);
 			}
 		}

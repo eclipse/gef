@@ -21,7 +21,7 @@
 		<relativePath>../org.eclipse.gef.releng/pom.xml</relativePath>
 	</parent>
 	<artifactId>org.eclipse.gef.mvc.examples</artifactId>
-	<version>5.2.2-SNAPSHOT</version>
+	<version>5.2.3-SNAPSHOT</version>
 	<packaging>eclipse-feature</packaging>
 	<groupId>org.eclipse.gef.features</groupId>
 	<build>

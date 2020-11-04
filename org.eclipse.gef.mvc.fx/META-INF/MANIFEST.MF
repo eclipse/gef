@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF MVC.FX
 Bundle-SymbolicName: org.eclipse.gef.mvc.fx
-Bundle-Version: 5.2.2.qualifier
+Bundle-Version: 5.2.3.qualifier
 Bundle-Vendor: Eclipse GEF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.gef.mvc.fx;uses:="com.google.inject.multibindings",
@@ -10,6 +10,8 @@ Export-Package: org.eclipse.gef.mvc.fx;uses:="com.google.inject.multibindings",
  org.eclipse.gef.mvc.fx.domain,
  org.eclipse.gef.mvc.fx.gestures,
  org.eclipse.gef.mvc.fx.handlers,
+ org.eclipse.gef.mvc.fx.internal.behaviors;x-internal:=true,
+ org.eclipse.gef.mvc.fx.internal.handlers;x-internal:=true,
  org.eclipse.gef.mvc.fx.models,
  org.eclipse.gef.mvc.fx.operations,
  org.eclipse.gef.mvc.fx.parts;uses:="com.google.inject",

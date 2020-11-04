@@ -13,7 +13,6 @@
 package org.eclipse.gef.mvc.examples.logo.parts;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -22,13 +21,16 @@ import org.eclipse.gef.common.collections.SetMultimapChangeListener;
 import org.eclipse.gef.fx.anchors.DynamicAnchor;
 import org.eclipse.gef.fx.anchors.IAnchor;
 import org.eclipse.gef.fx.anchors.OrthogonalProjectionStrategy;
+import org.eclipse.gef.fx.internal.nodes.ConnectionEx;
+import org.eclipse.gef.fx.internal.nodes.IBendableCurve;
+import org.eclipse.gef.fx.internal.nodes.Traverse;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.GeometryNode;
 import org.eclipse.gef.fx.nodes.OrthogonalRouter;
 import org.eclipse.gef.fx.nodes.PolyBezierInterpolator;
 import org.eclipse.gef.fx.nodes.PolylineInterpolator;
 import org.eclipse.gef.fx.nodes.StraightRouter;
-import org.eclipse.gef.geometry.planar.AffineTransform;
+import org.eclipse.gef.geometry.planar.ICurve;
 import org.eclipse.gef.geometry.planar.IGeometry;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.examples.logo.model.AbstractGeometricElement;
@@ -49,11 +51,13 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
 
-public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
-		implements IBendableContentPart<Connection> {
+@SuppressWarnings("restriction")
+public abstract class GeometricCurvePart<C extends Node, D extends Node, T extends Node & IBendableCurve<C, D>>
+		extends AbstractGeometricElementPart<T> implements IBendableContentPart<T> {
 
 	public static class ArrowHead extends Polygon {
 		public ArrowHead() {
@@ -69,11 +73,25 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 		}
 	}
 
+	public static final class CONNECTION
+			extends GeometricCurvePart<GeometryNode<? extends ICurve>, Node, ConnectionEx> {
+		@Override
+		protected ConnectionEx doCreateVisual() {
+			return new ConnectionEx();
+		}
+	}
+
+	public static final class TRAVERSE extends GeometricCurvePart<Polyline, Shape, Traverse> {
+		@Override
+		protected Traverse doCreateVisual() {
+			return new Traverse();
+		}
+	}
+
 	private final CircleHead START_CIRCLE_HEAD = new CircleHead();
 	private final CircleHead END_CIRCLE_HEAD = new CircleHead();
 	private final ArrowHead START_ARROW_HEAD = new ArrowHead();
 	private final ArrowHead END_ARROW_HEAD = new ArrowHead();
-	private GeometricCurve previousContent;
 
 	// refresh visual upon model property changes
 	private final ListChangeListener<Point> wayPointsChangeListener = new ListChangeListener<Point>() {
@@ -148,14 +166,6 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 	}
 
 	@Override
-	protected Connection doCreateVisual() {
-		Connection visual = new Connection();
-		visual.setInterpolator(new PolyBezierInterpolator());
-		((GeometryNode<?>) visual.getCurve()).setStrokeLineCap(StrokeLineCap.BUTT);
-		return visual;
-	}
-
-	@Override
 	protected void doDetachFromAnchorageVisual(IVisualPart<? extends Node> anchorage, String role) {
 		if (role.equals(SOURCE_ROLE)) {
 			getVisual().setStartPoint(getVisual().getStartPoint());
@@ -197,40 +207,16 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 		return Collections.emptyList();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected void doRefreshVisual(Connection visual) {
+	protected void doRefreshVisual(T visual) {
+		setVisualBendPoints(getContentBendPoints());
+
 		GeometricCurve content = getContent();
 
-		// TODO: extract router code and replace start/end/control point
-		// handling by calling
-		// setVisualBendPoints(getContentBendPoints());
-
-		List<Point> wayPoints = content.getWayPointsCopy();
-
-		// TODO: why is this needed??
-		AffineTransform transform = content.getTransform();
-		if (previousContent == null || (transform != null && !transform.equals(previousContent.getTransform())
-				|| transform == null && previousContent.getTransform() != null)) {
-			if (transform != null) {
-				Point[] transformedWayPoints = transform.getTransformed(wayPoints.toArray(new Point[] {}));
-				wayPoints = Arrays.asList(transformedWayPoints);
-			}
-		}
-
-		if (!getContentAnchoragesUnmodifiable().containsValue(SOURCE_ROLE)) {
-			visual.setStartPoint(wayPoints.remove(0));
-		} else {
-			visual.setStartPointHint(wayPoints.remove(0));
-		}
-
-		if (!getContentAnchoragesUnmodifiable().containsValue(TARGET_ROLE)) {
-			visual.setEndPoint(wayPoints.remove(wayPoints.size() - 1));
-		} else {
-			visual.setEndPointHint(wayPoints.remove(wayPoints.size() - 1));
-		}
-
-		if (!visual.getControlPoints().equals(wayPoints)) {
-			visual.setControlPoints(wayPoints);
+		List<Double> dashList = new ArrayList<>(content.getDashes().length);
+		for (double d : content.getDashes()) {
+			dashList.add(d);
 		}
 
 		// decorations
@@ -242,12 +228,12 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 			break;
 		case CIRCLE:
 			if (visual.getStartDecoration() == null || !(visual.getStartDecoration() instanceof CircleHead)) {
-				visual.setStartDecoration(START_CIRCLE_HEAD);
+				visual.setStartDecoration((D) START_CIRCLE_HEAD);
 			}
 			break;
 		case ARROW:
 			if (visual.getStartDecoration() == null || !(visual.getStartDecoration() instanceof ArrowHead)) {
-				visual.setStartDecoration(START_ARROW_HEAD);
+				visual.setStartDecoration((D) START_ARROW_HEAD);
 			}
 			break;
 		}
@@ -259,12 +245,12 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 			break;
 		case CIRCLE:
 			if (visual.getEndDecoration() == null || !(visual.getEndDecoration() instanceof CircleHead)) {
-				visual.setEndDecoration(END_CIRCLE_HEAD);
+				visual.setEndDecoration((D) END_CIRCLE_HEAD);
 			}
 			break;
 		case ARROW:
 			if (visual.getEndDecoration() == null || !(visual.getEndDecoration() instanceof ArrowHead)) {
-				visual.setEndDecoration(END_ARROW_HEAD);
+				visual.setEndDecoration((D) END_ARROW_HEAD);
 			}
 			break;
 		}
@@ -272,20 +258,40 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 		Shape startDecorationVisual = (Shape) visual.getStartDecoration();
 		Shape endDecorationVisual = (Shape) visual.getEndDecoration();
 
-		// stroke paint
-		if (((GeometryNode<?>) visual.getCurve()).getStroke() != content.getStroke()) {
-			((GeometryNode<?>) visual.getCurve()).setStroke(content.getStroke());
+		if (visual.getCurve() instanceof GeometryNode) {
+			if (((GeometryNode<?>) visual.getCurve()).getStrokeLineCap() != StrokeLineCap.BUTT) {
+				((GeometryNode<?>) visual.getCurve()).setStrokeLineCap(StrokeLineCap.BUTT);
+			}
+			((GeometryNode<?>) visual.getCurve()).setStrokeLineCap(StrokeLineCap.BUTT);
+			if (((GeometryNode<?>) visual.getCurve()).getStroke() != content.getStroke()) {
+				((GeometryNode<?>) visual.getCurve()).setStroke(content.getStroke());
+			}
+			if (((GeometryNode<?>) visual.getCurve()).getStrokeWidth() != content.getStrokeWidth()) {
+				((GeometryNode<?>) visual.getCurve()).setStrokeWidth(content.getStrokeWidth());
+			}
+			if (!((GeometryNode<?>) visual.getCurve()).getStrokeDashArray().equals(dashList)) {
+				((GeometryNode<?>) visual.getCurve()).getStrokeDashArray().setAll(dashList);
+			}
+		} else if (visual.getCurve() instanceof Shape) {
+			if (((Shape) visual.getCurve()).getStrokeLineCap() != StrokeLineCap.BUTT) {
+				((Shape) visual.getCurve()).setStrokeLineCap(StrokeLineCap.BUTT);
+			}
+			if (((Shape) visual.getCurve()).getStroke() != content.getStroke()) {
+				((Shape) visual.getCurve()).setStroke(content.getStroke());
+			}
+			if (((Shape) visual.getCurve()).getStrokeWidth() != content.getStrokeWidth()) {
+				((Shape) visual.getCurve()).setStrokeWidth(content.getStrokeWidth());
+			}
+			if (!((Shape) visual.getCurve()).getStrokeDashArray().equals(dashList)) {
+				((Shape) visual.getCurve()).getStrokeDashArray().setAll(dashList);
+			}
 		}
+
 		if (startDecorationVisual != null && startDecorationVisual.getStroke() != content.getStroke()) {
 			startDecorationVisual.setStroke(content.getStroke());
 		}
 		if (endDecorationVisual != null && endDecorationVisual.getStroke() != content.getStroke()) {
 			endDecorationVisual.setStroke(content.getStroke());
-		}
-
-		// stroke width
-		if (((GeometryNode<?>) visual.getCurve()).getStrokeWidth() != content.getStrokeWidth()) {
-			((GeometryNode<?>) visual.getCurve()).setStrokeWidth(content.getStrokeWidth());
 		}
 		if (startDecorationVisual != null && startDecorationVisual.getStrokeWidth() != content.getStrokeWidth()) {
 			startDecorationVisual.setStrokeWidth(content.getStrokeWidth());
@@ -294,21 +300,12 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 			endDecorationVisual.setStrokeWidth(content.getStrokeWidth());
 		}
 
-		// dashes
-		List<Double> dashList = new ArrayList<>(content.getDashes().length);
-		for (double d : content.getDashes()) {
-			dashList.add(d);
-		}
-		if (!((GeometryNode<?>) visual.getCurve()).getStrokeDashArray().equals(dashList)) {
-			((GeometryNode<?>) visual.getCurve()).getStrokeDashArray().setAll(dashList);
-		}
-
 		// connection router
 		if (content.getRoutingStyle().equals(RoutingStyle.ORTHOGONAL)) {
 			// re-attach visual in case we are connected to an anchor with
 			// non orthogonal computation strategy
-			if (getVisual().getStartAnchor() != null && getVisual().getStartAnchor() instanceof DynamicAnchor
-					&& !(((DynamicAnchor) getVisual().getStartAnchor())
+			if (visual.getStartAnchor() != null && visual.getStartAnchor() instanceof DynamicAnchor
+					&& !(((DynamicAnchor) visual.getStartAnchor())
 							.getComputationStrategy() instanceof OrthogonalProjectionStrategy)) {
 				IVisualPart<? extends Node> anchorage = getViewer().getVisualPartMap()
 						.get(getVisual().getStartAnchor().getAnchorage());
@@ -318,22 +315,24 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 					doAttachToAnchorageVisual(anchorage, SOURCE_ROLE);
 				}
 			}
-			if (getVisual().getEndAnchor() != null && getVisual().getEndAnchor() instanceof DynamicAnchor
+			if (visual.getEndAnchor() != null && visual.getEndAnchor() instanceof DynamicAnchor
 					&& !(((DynamicAnchor) getVisual().getEndAnchor())
 							.getComputationStrategy() instanceof OrthogonalProjectionStrategy)) {
 				IVisualPart<? extends Node> anchorage = getViewer().getVisualPartMap()
-						.get(getVisual().getEndAnchor().getAnchorage());
+						.get(visual.getEndAnchor().getAnchorage());
 				doDetachFromAnchorageVisual(anchorage, TARGET_ROLE);
 				if (anchorage != this) {
 					// connected to anchorage
 					doAttachToAnchorageVisual(anchorage, TARGET_ROLE);
 				}
 			}
-			if (!(visual.getInterpolator() instanceof PolylineInterpolator)) {
-				visual.setInterpolator(new PolylineInterpolator());
-			}
-			if (!(visual.getRouter() instanceof OrthogonalRouter)) {
-				visual.setRouter(new OrthogonalRouter());
+			if (visual instanceof Connection) {
+				if (!(((Connection) visual).getInterpolator() instanceof PolylineInterpolator)) {
+					((Connection) visual).setInterpolator(new PolylineInterpolator());
+				}
+				if (!(((Connection) visual).getRouter() instanceof OrthogonalRouter)) {
+					((Connection) visual).setRouter(new OrthogonalRouter());
+				}
 			}
 		} else {
 			// re-attach visual in case we are connected to an anchor with
@@ -346,27 +345,26 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 				doDetachFromAnchorageVisual(anchorage, SOURCE_ROLE);
 				doAttachToAnchorageVisual(anchorage, SOURCE_ROLE);
 			}
-			if (getVisual().getEndAnchor() != null && getVisual().getEndAnchor() instanceof DynamicAnchor
-					&& ((DynamicAnchor) getVisual().getEndAnchor())
+			if (visual.getEndAnchor() != null && visual.getEndAnchor() instanceof DynamicAnchor
+					&& ((DynamicAnchor) visual.getEndAnchor())
 							.getComputationStrategy() instanceof OrthogonalProjectionStrategy) {
 				IVisualPart<? extends Node> anchorage = getViewer().getVisualPartMap()
-						.get(getVisual().getEndAnchor().getAnchorage());
+						.get(visual.getEndAnchor().getAnchorage());
 				doDetachFromAnchorageVisual(anchorage, TARGET_ROLE);
 				doAttachToAnchorageVisual(anchorage, TARGET_ROLE);
 			}
-			if (!(visual.getInterpolator() instanceof PolyBezierInterpolator)) {
-				visual.setInterpolator(new PolyBezierInterpolator());
-			}
-			if (!(visual.getRouter() instanceof StraightRouter)) {
-				visual.setRouter(new StraightRouter());
+			if (visual instanceof Connection) {
+				if (!(((Connection) visual).getInterpolator() instanceof PolyBezierInterpolator)) {
+					((Connection) visual).setInterpolator(new PolyBezierInterpolator());
+				}
+				if (!(((Connection) visual).getRouter() instanceof StraightRouter)) {
+					((Connection) visual).setRouter(new StraightRouter());
+				}
 			}
 		}
 
-		previousContent = content;
-
 		// apply effect
 		super.doRefreshVisual(visual);
-
 	}
 
 	@Override
@@ -454,4 +452,5 @@ public class GeometricCurvePart extends AbstractGeometricElementPart<Connection>
 		refreshContentAnchorages();
 		getContent().setWayPoints(waypoints.toArray(new Point[] {}));
 	}
+
 }

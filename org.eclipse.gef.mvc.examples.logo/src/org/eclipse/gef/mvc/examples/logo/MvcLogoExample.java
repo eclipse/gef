@@ -28,6 +28,8 @@ import org.eclipse.gef.geometry.planar.PolyBezier;
 import org.eclipse.gef.mvc.examples.AbstractMvcExample;
 import org.eclipse.gef.mvc.examples.logo.model.AbstractGeometricElement;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve;
+import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve.InterpolationStyle;
+import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve.RoutingStyle;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricShape;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
@@ -70,19 +72,19 @@ public class MvcLogoExample extends AbstractMvcExample {
 
 		GeometricCurve selectionBoundsTopLine = new GeometricCurve(
 				new Point[] { new Point(), new Point(140, 24), new Point() }, GEF_COLOR_GREEN, GEF_STROKE_WIDTH,
-				GEF_DASH_PATTERN, null);
+				GEF_DASH_PATTERN, null, RoutingStyle.STRAIGHT, InterpolationStyle.POLYGON);
 
 		GeometricCurve selectionBoundsLeftLine = new GeometricCurve(
 				new Point[] { new Point(), new Point(19, 70), new Point() }, GEF_COLOR_GREEN, GEF_STROKE_WIDTH,
-				GEF_DASH_PATTERN, null);
+				GEF_DASH_PATTERN, null, RoutingStyle.STRAIGHT, InterpolationStyle.POLYBEZIER);
 
 		GeometricCurve selectionBoundsBottomLine = new GeometricCurve(
 				new Point[] { new Point(), new Point(140, 118), new Point() }, GEF_COLOR_GREEN, GEF_STROKE_WIDTH,
-				new Double[] { 15d, 10d }, null);
+				new Double[] { 15d, 10d }, null, RoutingStyle.ORTHOGONAL, InterpolationStyle.POLYGON);
 
 		GeometricCurve selectionBoundsRightLine = new GeometricCurve(
 				new Point[] { new Point(), new Point(250, 70), new Point() }, GEF_COLOR_GREEN, GEF_STROKE_WIDTH,
-				new Double[] { 15d, 10d }, null);
+				new Double[] { 15d, 10d }, null, RoutingStyle.ORTHOGONAL, InterpolationStyle.POLYBEZIER);
 
 		// g shapes
 		GeometricShape gBaseShape = new GeometricShape(createGBaseShapeGeometry(),

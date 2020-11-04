@@ -23,6 +23,8 @@ import org.eclipse.gef.geometry.planar.Dimension;
 import org.eclipse.gef.geometry.planar.Point;
 import org.eclipse.gef.mvc.examples.logo.MvcLogoExample;
 import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve;
+import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve.InterpolationStyle;
+import org.eclipse.gef.mvc.examples.logo.model.GeometricCurve.RoutingStyle;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricCurvePart;
 import org.eclipse.gef.mvc.examples.logo.parts.GeometricShapePart;
 import org.eclipse.gef.mvc.fx.gestures.ClickDragGesture;
@@ -49,7 +51,7 @@ public class CreateCurveOnDragHandler extends AbstractHandler implements IOnDrag
 
 	private CircleSegmentHandlePart bendTargetPart;
 	private Map<AdapterKey<? extends IOnDragHandler>, IOnDragHandler> dragPolicies;
-	private GeometricCurvePart curvePart;
+	private GeometricCurvePart<? extends Node, ? extends Node, ? extends Node> curvePart;
 
 	@Override
 	public void abortDrag() {
@@ -103,7 +105,8 @@ public class CreateCurveOnDragHandler extends AbstractHandler implements IOnDrag
 		dragPolicies = null;
 	}
 
-	protected CircleSegmentHandlePart findBendTargetPart(GeometricCurvePart curvePart, EventTarget eventTarget) {
+	protected CircleSegmentHandlePart findBendTargetPart(GeometricCurvePart<?, ?, ?> curvePart,
+			EventTarget eventTarget) {
 		// find last segment handle part
 		Multiset<IVisualPart<? extends Node>> anchoreds = curvePart.getAnchoredsUnmodifiable();
 		for (IVisualPart<? extends Node> anchored : anchoreds) {
@@ -148,17 +151,19 @@ public class CreateCurveOnDragHandler extends AbstractHandler implements IOnDrag
 		return false;
 	}
 
+	@SuppressWarnings("restriction")
 	@Override
 	public void startDrag(MouseEvent event) {
 		// create new curve
 		GeometricCurve curve = new GeometricCurve(new Point[] { new Point(), new Point() },
-				MvcLogoExample.GEF_COLOR_GREEN, MvcLogoExample.GEF_STROKE_WIDTH, MvcLogoExample.GEF_DASH_PATTERN, null);
+				MvcLogoExample.GEF_COLOR_GREEN, MvcLogoExample.GEF_STROKE_WIDTH, MvcLogoExample.GEF_DASH_PATTERN, null,
+				RoutingStyle.STRAIGHT, InterpolationStyle.POLYBEZIER);
 		curve.addSourceAnchorage(getShapePart().getContent());
 
 		// create using CreationPolicy from root part
 		CreationPolicy creationPolicy = getHost().getRoot().getAdapter(CreationPolicy.class);
 		init(creationPolicy);
-		curvePart = (GeometricCurvePart) creationPolicy.create(curve, getHost().getRoot(),
+		curvePart = (GeometricCurvePart<?, ?, ?>) creationPolicy.create(curve, getHost().getRoot(),
 				HashMultimap.<IContentPart<? extends Node>, String> create());
 		commit(creationPolicy);
 

@@ -15,6 +15,7 @@ package org.eclipse.gef.mvc.fx.parts;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.gef.fx.internal.nodes.IBendableCurve;
 import org.eclipse.gef.fx.listeners.VisualChangeListener;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.geometry.planar.Point;
@@ -32,6 +33,7 @@ import javafx.scene.transform.Transform;
  * @param <V>
  *            The visual {@link Node} used by this {@link AbstractFeedbackPart}.
  */
+@SuppressWarnings("restriction")
 abstract public class AbstractFeedbackPart<V extends Node>
 		extends AbstractVisualPart<V> implements IFeedbackPart<V> {
 
@@ -63,6 +65,7 @@ abstract public class AbstractFeedbackPart<V extends Node>
 				"IFeedbackParts do not support children");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void doAttachToAnchorageVisual(
 			IVisualPart<? extends Node> anchorage, String role) {
@@ -105,11 +108,15 @@ abstract public class AbstractFeedbackPart<V extends Node>
 				Connection connection = (Connection) anchorageVisual;
 				connection.pointsUnmodifiableProperty()
 						.addListener(geometryListener);
+			} else if (anchorageVisual instanceof IBendableCurve) {
+				((IBendableCurve<? extends Node, ? extends Node>) anchorageVisual)
+						.getPointsUnmodifiable().addListener(geometryListener);
 			}
 		}
 		anchorageLinkCount.put(anchorage, count + 1);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void doDetachFromAnchorageVisual(
 			IVisualPart<? extends Node> anchorage, String role) {
@@ -125,6 +132,10 @@ abstract public class AbstractFeedbackPart<V extends Node>
 			Node anchorageVisual = anchorage.getVisual();
 			if (anchorageVisual instanceof Connection) {
 				((Connection) anchorageVisual).pointsUnmodifiableProperty()
+						.removeListener(geometryListener);
+			} else if (anchorageVisual instanceof IBendableCurve) {
+				((IBendableCurve<? extends Node, ? extends Node>) anchorageVisual)
+						.getPointsUnmodifiable()
 						.removeListener(geometryListener);
 			}
 		}

@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.gef.fx.anchors.IAnchor;
 import org.eclipse.gef.fx.anchors.StaticAnchor;
+import org.eclipse.gef.fx.internal.nodes.IBendableCurve;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.geometry.convert.fx.FX2Geometry;
 import org.eclipse.gef.geometry.planar.AffineTransform;
@@ -27,6 +28,8 @@ import org.eclipse.gef.mvc.fx.providers.IAnchorProvider;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 
 import javafx.scene.Node;
+import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Shape;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
@@ -43,6 +46,7 @@ import javafx.scene.transform.Translate;
  *            The visual node used by this {@link IBendableContentPart}.
  *
  */
+@SuppressWarnings("restriction")
 public interface IBendableContentPart<V extends Node>
 		extends ITransformableContentPart<V>, IResizableContentPart<V> {
 
@@ -463,12 +467,14 @@ public interface IBendableContentPart<V extends Node>
 	 * @return The {@link BendPoint}s of this {@link IBendableContentPart}'s
 	 *         visual.
 	 */
+	@SuppressWarnings("unchecked")
 	public default List<org.eclipse.gef.mvc.fx.parts.IBendableContentPart.BendPoint> getVisualBendPoints() {
-		List<BendPoint> bendPoints = new ArrayList<>();
 		IViewer viewer = getRoot().getViewer();
-		Node bendableVisual = getVisual();
-		if (bendableVisual instanceof Connection) {
-			Connection connection = (Connection) bendableVisual;
+		Node visual = getVisual();
+
+		if (visual instanceof Connection) {
+			List<BendPoint> bendPoints = new ArrayList<>();
+			Connection connection = (Connection) visual;
 			List<IAnchor> anchors = connection.getAnchorsUnmodifiable();
 			for (int i = 0; i < anchors.size(); i++) {
 				IAnchor anchor = anchors.get(i);
@@ -498,6 +504,32 @@ public interface IBendableContentPart<V extends Node>
 						bendPoints.add(new BendPoint(connection.getPoint(i)));
 					}
 				}
+			}
+			return bendPoints;
+		} else if (visual instanceof IBendableCurve) {
+			List<BendPoint> bendPoints = new ArrayList<>();
+			IBendableCurve<? extends Node, ? extends Node> bendableCurve = (IBendableCurve<? extends Node, ? extends Node>) visual;
+			List<Point> points = bendableCurve.getPointsUnmodifiable();
+			for (int i = 0; i < points.size(); i++) {
+				Point point = points.get(i);
+				BendPoint bp = new BendPoint(point);
+				if (bendableCurve.isConnected(i)) {
+					// determine anchorage content
+					IAnchor anchor = i == 0 ? bendableCurve.getStartAnchor()
+							: i == points.size() - 1
+									? bendableCurve.getEndAnchor()
+									: null;
+					Node anchorageNode = anchor.getAnchorage();
+					IVisualPart<? extends Node> part = PartUtils
+							.retrieveVisualPart(viewer, anchorageNode);
+					Object contentAnchorage = null;
+					if (part instanceof IContentPart) {
+						contentAnchorage = ((IContentPart<? extends Node>) part)
+								.getContent();
+					}
+					bp = new BendPoint(contentAnchorage, point);
+				}
+				bendPoints.add(bp);
 			}
 			return bendPoints;
 		} else {
@@ -549,6 +581,7 @@ public interface IBendableContentPart<V extends Node>
 	 * @param bendPoints
 	 *            The bend points.
 	 */
+	@SuppressWarnings("unchecked")
 	public default void setVisualBendPoints(List<BendPoint> bendPoints) {
 		if (bendPoints == null || bendPoints.size() < 2) {
 			throw new IllegalArgumentException(
@@ -599,6 +632,45 @@ public interface IBendableContentPart<V extends Node>
 
 			// update anchors
 			connection.setAnchors(newAnchors);
+		} else if (bendableVisual instanceof IBendableCurve) {
+			if (bendPoints == null || bendPoints.size() < 2) {
+				throw new IllegalArgumentException(
+						"Not enough bend points supplied!");
+			}
+			IBendableCurve<Polyline, Shape> bendableCurve = (IBendableCurve<Polyline, Shape>) getVisual();
+			BendPoint start = bendPoints.get(0);
+			if (!start.isAttached()) {
+				bendableCurve.setStartPoint(start.getPosition());
+			} else {
+				if (getViewer() != null) {
+					IContentPart<? extends Node> part = getViewer()
+							.getContentPartMap()
+							.get(start.getContentAnchorage());
+					IAnchorProvider anchorProvider = part
+							.getAdapter(IAnchorProvider.class);
+					bendableCurve.setStartAnchor(anchorProvider.get(this,
+							IBendableContentPart.SOURCE_ROLE));
+				}
+			}
+			BendPoint end = bendPoints.get(bendPoints.size() - 1);
+			if (!end.isAttached()) {
+				bendableCurve.setEndPoint(end.getPosition());
+			} else {
+				if (getViewer() != null) {
+					IContentPart<? extends Node> part = getViewer()
+							.getContentPartMap().get(end.getContentAnchorage());
+					IAnchorProvider anchorProvider = part
+							.getAdapter(IAnchorProvider.class);
+					bendableCurve.setEndAnchor(anchorProvider.get(this,
+							IBendableContentPart.TARGET_ROLE));
+				}
+			}
+
+			List<Point> controlPoints = new ArrayList<>();
+			for (int i = 1; i < bendPoints.size() - 1; i++) {
+				controlPoints.add(bendPoints.get(i).getPosition());
+			}
+			bendableCurve.setControlPoints(controlPoints);
 		} else {
 			throw new UnsupportedOperationException(
 					"Default behavior only covers IBendableContentParts with a Connection visual. Please implement specific behavior for this implementation.");

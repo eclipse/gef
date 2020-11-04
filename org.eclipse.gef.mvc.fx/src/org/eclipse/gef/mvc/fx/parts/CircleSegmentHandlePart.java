@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.gef.mvc.fx.parts;
 
+import org.eclipse.gef.fx.internal.nodes.IBendableCurve;
 import org.eclipse.gef.fx.nodes.Connection;
 
 import com.google.common.collect.SetMultimap;
@@ -29,6 +30,7 @@ import javafx.scene.shape.StrokeType;
  * @author anyssen
  *
  */
+@SuppressWarnings("restriction")
 public class CircleSegmentHandlePart extends AbstractSegmentHandlePart<Circle> {
 
 	/**
@@ -64,6 +66,7 @@ public class CircleSegmentHandlePart extends AbstractSegmentHandlePart<Circle> {
 	 * be set to indicate whether the handle is connected to another part or
 	 * not.
 	 */
+	@SuppressWarnings("unchecked")
 	protected void updateColor() {
 		// only update when bound to anchorage
 		SetMultimap<IVisualPart<? extends Node>, String> anchorages = getAnchoragesUnmodifiable();
@@ -85,15 +88,22 @@ public class CircleSegmentHandlePart extends AbstractSegmentHandlePart<Circle> {
 			boolean connected = false;
 			IVisualPart<? extends Node> targetPart = anchorages.keySet()
 					.iterator().next();
-			if (targetPart.getVisual() instanceof Connection) {
-				Connection connection = (Connection) targetPart.getVisual();
+			Node targetVisual = targetPart.getVisual();
+			if (targetVisual instanceof Connection
+					|| targetPart.getVisual() instanceof IBendableCurve) {
 				if (getSegmentIndex() + getSegmentParameter() == 0.0) {
 					// handle at start point
-					connected = connection.isStartConnected();
+					connected = targetVisual instanceof Connection
+							? ((Connection) targetVisual).isStartConnected()
+							: ((IBendableCurve<? extends Node, ? extends Node>) targetVisual)
+									.isStartConnected();
 				} else if (getSegmentParameter()
 						+ getSegmentIndex() == getSegmentsInScene().length) {
 					// handle at end point
-					connected = connection.isEndConnected();
+					connected = targetVisual instanceof Connection
+							? ((Connection) targetVisual).isEndConnected()
+							: ((IBendableCurve<? extends Node, ? extends Node>) targetVisual)
+									.isEndConnected();
 				}
 			}
 			// update color according to connected state

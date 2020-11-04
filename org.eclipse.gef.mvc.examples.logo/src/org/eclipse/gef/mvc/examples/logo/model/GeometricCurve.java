@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2016 itemis AG and others.
+ * Copyright (c) 2014, 2020 itemis AG and others.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
@@ -39,6 +39,10 @@ public class GeometricCurve extends AbstractGeometricElement<ICurve> {
 		NONE, ARROW, CIRCLE
 	}
 
+	public enum InterpolationStyle {
+		POLYGON, POLYBEZIER
+	}
+
 	public enum RoutingStyle {
 		STRAIGHT, ORTHOGONAL
 	}
@@ -46,6 +50,7 @@ public class GeometricCurve extends AbstractGeometricElement<ICurve> {
 	public static final String SOURCE_DECORATION_PROPERTY = "sourceDecoration";
 	public static final String TARGET_DECORATION_PROPERTY = "targetDecoration";
 	public static final String ROUTING_STYLE_PROPERTY = "routingStyle";
+	public static final String INTERPOLATION_STYLE_PROPERTY = "interpolationStyle";
 	public static final String WAY_POINTS_PROPERTY = "wayPoints";
 	public static final String DASHES_PROPERTY = "dashes";
 
@@ -64,18 +69,23 @@ public class GeometricCurve extends AbstractGeometricElement<ICurve> {
 			TARGET_DECORATION_PROPERTY, Decoration.NONE);
 	private final ObjectProperty<RoutingStyle> routingStyleProperty = new SimpleObjectProperty<>(this,
 			ROUTING_STYLE_PROPERTY, RoutingStyle.STRAIGHT);
+	private final ObjectProperty<InterpolationStyle> interpolationStyleProperty = new SimpleObjectProperty<>(this,
+			INTERPOLATION_STYLE_PROPERTY, InterpolationStyle.POLYBEZIER);
 	private final ReadOnlyListWrapperEx<Double> dashesProperty = new ReadOnlyListWrapperEx<>(this, DASHES_PROPERTY,
 			CollectionUtils.<Double> observableArrayList());
 	private final Set<AbstractGeometricElement<? extends IGeometry>> sourceAnchorages = new HashSet<>();
 	private final Set<AbstractGeometricElement<? extends IGeometry>> targetAnchorages = new HashSet<>();
 
-	public GeometricCurve(Point[] waypoints, Paint stroke, double strokeWidth, Double[] dashes, Effect effect) {
+	public GeometricCurve(Point[] waypoints, Paint stroke, double strokeWidth, Double[] dashes, Effect effect,
+			RoutingStyle routingStyle, InterpolationStyle interpolationStyle) {
 		super(constructCurveFromWayPoints(waypoints), stroke, strokeWidth, effect);
 		if (waypoints.length < 2) {
 			throw new IllegalArgumentException("At least start and end point need to be specified,");
 		}
 		wayPointsProperty.addAll(Arrays.asList(waypoints));
 		dashesProperty.addAll(dashes);
+		setRoutingStyle(routingStyle);
+		setInterpolationStyle(interpolationStyle);
 	}
 
 	public void addSourceAnchorage(AbstractGeometricElement<? extends IGeometry> anchored) {
@@ -98,7 +108,7 @@ public class GeometricCurve extends AbstractGeometricElement<ICurve> {
 
 	public GeometricCurve getCopy() {
 		GeometricCurve copy = new GeometricCurve(getWayPointsCopy().toArray(new Point[] {}), getStroke(),
-				getStrokeWidth(), getDashes(), getEffect());
+				getStrokeWidth(), getDashes(), getEffect(), getRoutingStyle(), getInterpolationStyle());
 		copy.setTransform(getTransform());
 		copy.setRoutingStyle(getRoutingStyle());
 		copy.setSourceDecoration(getSourceDecoration());
@@ -108,6 +118,10 @@ public class GeometricCurve extends AbstractGeometricElement<ICurve> {
 
 	public Double[] getDashes() {
 		return dashesProperty.get().toArray(new Double[] {});
+	}
+
+	public InterpolationStyle getInterpolationStyle() {
+		return interpolationStyleProperty.get();
 	}
 
 	public RoutingStyle getRoutingStyle() {
@@ -138,6 +152,17 @@ public class GeometricCurve extends AbstractGeometricElement<ICurve> {
 		return new ArrayList<>(getWayPoints());
 	}
 
+	/**
+	 * Returns the {@link ObjectProperty} for the {@link InterpolationStyle} of
+	 * this {@link GeometricCurve}.
+	 *
+	 * @return The {@link ObjectProperty} for the {@link InterpolationStyle} of
+	 *         this {@link GeometricCurve}.
+	 */
+	public ObjectProperty<InterpolationStyle> interpolationStyleProperty() {
+		return interpolationStyleProperty;
+	}
+
 	public void removeWayPoint(int i) {
 		// TODO: check index
 		List<Point> points = getWayPointsCopy();
@@ -154,6 +179,10 @@ public class GeometricCurve extends AbstractGeometricElement<ICurve> {
 	 */
 	public ObjectProperty<RoutingStyle> routingStyleProperty() {
 		return routingStyleProperty;
+	}
+
+	public void setInterpolationStyle(InterpolationStyle interpolationStyle) {
+		interpolationStyleProperty.set(interpolationStyle);
 	}
 
 	public void setRoutingStyle(RoutingStyle routingStyle) {

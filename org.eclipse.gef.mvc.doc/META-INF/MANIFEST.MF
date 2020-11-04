@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: GEF MVC Developer Documentation
 Bundle-SymbolicName: org.eclipse.gef.mvc.doc;singleton:=true
-Bundle-Version: 5.2.2.qualifier
+Bundle-Version: 5.2.3.qualifier
 Bundle-Vendor: Eclipse GEF
 Require-Bundle: org.eclipse.core.commands;bundle-version="[3.6.0,4.0.0)";resolution:=optional,
  org.eclipse.ui.views;bundle-version="[3.6.0,4.0.0)";resolution:=optional,

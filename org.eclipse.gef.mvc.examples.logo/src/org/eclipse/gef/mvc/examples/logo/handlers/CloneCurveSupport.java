@@ -24,7 +24,8 @@ public class CloneCurveSupport extends AbstractCloneContentSupport {
 	public Object cloneContent() {
 		GeometricCurve original = getAdaptable().getContent();
 		GeometricCurve clone = new GeometricCurve(original.getWayPointsCopy().toArray(new Point[] {}),
-				original.getStroke(), original.getStrokeWidth(), original.getDashes(), original.getEffect());
+				original.getStroke(), original.getStrokeWidth(), original.getDashes(), original.getEffect(),
+				original.getRoutingStyle(), original.getInterpolationStyle());
 		clone.setGeometry((ICurve) original.getGeometry().getCopy());
 		clone.setSourceDecoration(original.getSourceDecoration());
 		clone.setTargetDecoration(original.getTargetDecoration());
@@ -41,7 +42,7 @@ public class CloneCurveSupport extends AbstractCloneContentSupport {
 	}
 
 	@Override
-	public GeometricCurvePart getAdaptable() {
-		return (GeometricCurvePart) super.getAdaptable();
+	public GeometricCurvePart<?, ?, ?> getAdaptable() {
+		return (GeometricCurvePart<?, ?, ?>) super.getAdaptable();
 	}
 }

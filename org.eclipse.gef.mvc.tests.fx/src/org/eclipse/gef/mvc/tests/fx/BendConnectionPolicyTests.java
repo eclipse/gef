@@ -37,6 +37,7 @@ import org.eclipse.gef.fx.anchors.DynamicAnchor.PreferredOrientation;
 import org.eclipse.gef.fx.anchors.IAnchor;
 import org.eclipse.gef.fx.anchors.OrthogonalProjectionStrategy;
 import org.eclipse.gef.fx.anchors.StaticAnchor;
+import org.eclipse.gef.fx.internal.nodes.ConnectionEx;
 import org.eclipse.gef.fx.nodes.Connection;
 import org.eclipse.gef.fx.nodes.GeometryNode;
 import org.eclipse.gef.fx.nodes.OrthogonalRouter;
@@ -53,6 +54,7 @@ import org.eclipse.gef.mvc.fx.MvcFxModule;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
 import org.eclipse.gef.mvc.fx.handlers.FocusAndSelectOnClickHandler;
 import org.eclipse.gef.mvc.fx.handlers.TranslateSelectedOnDragHandler;
+import org.eclipse.gef.mvc.fx.internal.behaviors.BendConnectionPolicyEx;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
 import org.eclipse.gef.mvc.fx.parts.AbstractContentPart;
 import org.eclipse.gef.mvc.fx.parts.IBendableContentPart;
@@ -60,7 +62,6 @@ import org.eclipse.gef.mvc.fx.parts.IContentPart;
 import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.parts.ITransformableContentPart;
 import org.eclipse.gef.mvc.fx.parts.IVisualPart;
-import org.eclipse.gef.mvc.fx.policies.BendConnectionPolicy;
 import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
 import org.eclipse.gef.mvc.fx.providers.DefaultAnchorProvider;
 import org.eclipse.gef.mvc.fx.providers.IAnchorProvider;
@@ -174,7 +175,7 @@ public class BendConnectionPolicyTests {
 
 		@Override
 		protected Connection doCreateVisual() {
-			return new Connection();
+			return new ConnectionEx();
 		}
 
 		@Override
@@ -401,7 +402,7 @@ public class BendConnectionPolicyTests {
 			// relocate on drag
 			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragHandler.class);
 			// bend
-			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendConnectionPolicy.class);
+			adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendConnectionPolicyEx.class);
 		}
 
 		protected void bindIContentPartFactory() {
@@ -436,14 +437,11 @@ public class BendConnectionPolicyTests {
 	 * Returns the index within the Connection's anchors for the given explicit
 	 * anchor index.
 	 *
-	 * @param connection
-	 *            The {@link Connection} for which to determine the anchor index
-	 *            matching the given explicit index.
-	 * @param explicitAnchorIndex
-	 *            The explicit anchor index for which to return the connection
-	 *            index.
-	 * @return The connection's anchor index for the given explicit anchor
-	 *         index.
+	 * @param connection          The {@link Connection} for which to determine the
+	 *                            anchor index matching the given explicit index.
+	 * @param explicitAnchorIndex The explicit anchor index for which to return the
+	 *                            connection index.
+	 * @return The connection's anchor index for the given explicit anchor index.
 	 */
 	// FIXME: Duplicate code (see
 	// BendConnectionOperation#getConnectionIndex(int)). Find a better place
@@ -466,9 +464,9 @@ public class BendConnectionPolicyTests {
 				"Cannot determine connection index for operation index " + explicitAnchorIndex + ".");
 	}
 
-	public static Point getPosition(final BendConnectionPolicy bendPolicy, final int explicitIndex) {
-		return bendPolicy.getHost().getVisual()
-				.getPoint(getConnectionIndex(bendPolicy.getHost().getVisual(), explicitIndex));
+	public static Point getPosition(final BendConnectionPolicyEx bendPolicy, final int explicitIndex) {
+		return ((Connection) bendPolicy.getHost().getVisual())
+				.getPoint(getConnectionIndex((Connection) bendPolicy.getHost().getVisual(), explicitIndex));
 	}
 
 	/**
@@ -607,7 +605,7 @@ public class BendConnectionPolicyTests {
 		assertEquals(4, connection.getVisual().getPointsUnmodifiable().size());
 
 		// create new segment between 2nd implicit and end
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
@@ -809,7 +807,7 @@ public class BendConnectionPolicyTests {
 		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 
 		// find way point anchor
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
@@ -889,7 +887,7 @@ public class BendConnectionPolicyTests {
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 
 		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
@@ -983,7 +981,7 @@ public class BendConnectionPolicyTests {
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 
 		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
@@ -1116,7 +1114,7 @@ public class BendConnectionPolicyTests {
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 
 		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
@@ -1290,7 +1288,7 @@ public class BendConnectionPolicyTests {
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 
 		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
@@ -1384,7 +1382,7 @@ public class BendConnectionPolicyTests {
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 
 		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
@@ -1586,7 +1584,7 @@ public class BendConnectionPolicyTests {
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 
 		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
@@ -1881,7 +1879,7 @@ public class BendConnectionPolicyTests {
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 
 		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
@@ -2182,7 +2180,7 @@ public class BendConnectionPolicyTests {
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
 		ctx.runAndWait(new Runnable() {
@@ -2300,7 +2298,7 @@ public class BendConnectionPolicyTests {
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 
 		// find way point anchor
 		ctx.runAndWait(new Runnable() {
@@ -2370,7 +2368,7 @@ public class BendConnectionPolicyTests {
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 
 		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 
@@ -2469,7 +2467,7 @@ public class BendConnectionPolicyTests {
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 
 		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 
@@ -2568,7 +2566,7 @@ public class BendConnectionPolicyTests {
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 
 		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 
@@ -2638,7 +2636,7 @@ public class BendConnectionPolicyTests {
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 
 		// find way point anchor
 		ctx.runAndWait(new Runnable() {
@@ -2714,7 +2712,7 @@ public class BendConnectionPolicyTests {
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 
 		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
@@ -2795,7 +2793,7 @@ public class BendConnectionPolicyTests {
 			public void run() {
 				bendPolicy.init();
 				// copy start anchor and make 1st router anchor explicit
-				bendPolicy.selectSegment(0);
+				bendPolicy.selectSegment(0, 1);
 				bendPolicy.move(new Point(), new Point(0, endPoint.y - startPoint.y));
 				// overlay removal should remove both router anchors, so that
 				// only the start anchor, its copy and the end anchor are
@@ -3028,17 +3026,15 @@ public class BendConnectionPolicyTests {
 	/**
 	 * <ol>
 	 * <li>class com.thyssenkrupp.tkse.promise.mdse.process.ui.view.provider.
-	 * ProcessDynamicAnchorProvider$1[Point(352.8252868652344,
-	 * -365.8699951171875)]
+	 * ProcessDynamicAnchorProvider$1[Point(352.8252868652344, -365.8699951171875)]
 	 * (com.thyssenkrupp.tkse.promise.mdse.process.ui.view.provider.
-	 * ProcessDynamicAnchorProvider$1@665574fb)
-	 * {org.eclipse.gef.mvc.fx.policies.
-	 * BendConnectionPolicy$AnchorHandle@3eb7ff78},
+	 * ProcessDynamicAnchorProvider$1@665574fb) {org.eclipse.gef.mvc.fx.policies.
+	 * BendConnectionPolicyEx$AnchorHandle@3eb7ff78},
 	 * <ul>
-	 * <li>DA anchorage geometry in scene = Polygon: (349.49988,
-	 * 56.54434506500246) -&gt; (359.9554149349976, 66.99988000000002) -&gt;
-	 * (349.49988, 77.45541493499758) -&gt; (339.04434506500246,
-	 * 66.99988000000002) -&gt; (349.49988, 56.54434506500246)
+	 * <li>DA anchorage geometry in scene = Polygon: (349.49988, 56.54434506500246)
+	 * -&gt; (359.9554149349976, 66.99988000000002) -&gt; (349.49988,
+	 * 77.45541493499758) -&gt; (339.04434506500246, 66.99988000000002) -&gt;
+	 * (349.49988, 56.54434506500246)
 	 * <li>DA anchor key = AnchorKey &lt;start&gt;
 	 * &lt;GeometryNode@333e01c6[styleClass=curve]&gt;
 	 * <li>DA anchored reference point = Point(356.25, -365.87)
@@ -3049,18 +3045,16 @@ public class BendConnectionPolicyTests {
 	 * org.eclipse.gef.fx.anchors.StaticAnchor[Point(356.25, -190.0)]
 	 * (StaticAnchor[referencePosition = Point(356.25, -190.0)])
 	 * {org.eclipse.gef.mvc.fx.policies.
-	 * BendConnectionPolicy$AnchorHandle@50ad5625},
+	 * BendConnectionPolicyEx$AnchorHandle@50ad5625},
 	 * <li>class com.thyssenkrupp.tkse.promise.mdse.process.ui.view.provider.
 	 * ProcessDynamicAnchorProvider$1[Point(346.9552917480469, -190.0)]
 	 * (com.thyssenkrupp.tkse.promise.mdse.process.ui.view.provider.
-	 * ProcessDynamicAnchorProvider$1@1d921267)
-	 * {org.eclipse.gef.mvc.fx.policies.
-	 * BendConnectionPolicy$AnchorHandle@1c5f6292}
+	 * ProcessDynamicAnchorProvider$1@1d921267) {org.eclipse.gef.mvc.fx.policies.
+	 * BendConnectionPolicyEx$AnchorHandle@1c5f6292}
 	 * <ul>
-	 * <li>DA anchorage geometry in scene = Polygon: (338.49988,
-	 * 237.54434506500243) -&gt; (348.9554149349976, 247.99988) -&gt;
-	 * (338.49988, 258.4554149349975) -&gt; (328.04434506500246, 247.99988)
-	 * -&gt; (338.49988, 237.54434506500243)
+	 * <li>DA anchorage geometry in scene = Polygon: (338.49988, 237.54434506500243)
+	 * -&gt; (348.9554149349976, 247.99988) -&gt; (338.49988, 258.4554149349975)
+	 * -&gt; (328.04434506500246, 247.99988) -&gt; (338.49988, 237.54434506500243)
 	 * <li>DA anchor key = AnchorKey &lt;end&gt;
 	 * &lt;GeometryNode@333e01c6[styleClass=curve]&gt;
 	 * <li>DA anchored reference point = Point(350.01, -190.0)
@@ -3098,12 +3092,12 @@ public class BendConnectionPolicyTests {
 		// ensure router inserted point
 		assertEquals(3, countExplicit(connection.getVisual()));
 
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
 				bendPolicy.init();
-				bendPolicy.selectSegment(0); // makes a router anchor explicit
+				bendPolicy.selectSegment(0, 1); // makes a router anchor explicit
 				bendPolicy.move(new Point(), new Point());
 				// XXX: Empty move() should use overlay removal to get rid of
 				// the recently added anchor (the one made explicit).
@@ -3128,7 +3122,7 @@ public class BendConnectionPolicyTests {
 		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 
 		// query bend policy for the connection
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 
 		// setup connection to be orthogonal, i.e. use orthogonal router and
 		// use orthogonal projection strategy at the anchorages
@@ -3168,7 +3162,7 @@ public class BendConnectionPolicyTests {
 				// double mid point
 				int midHandle = bendPolicy.getExplicitIndexAtOrBefore(1);
 				bendPolicy.createAfter(midHandle, connection.getVisual().getPoint(1));
-				bendPolicy.selectSegment(0);
+				bendPolicy.selectSegment(0, 1);
 				bendPolicy.move(new Point(), new Point(0, moveDown));
 			}
 		});
@@ -3232,7 +3226,7 @@ public class BendConnectionPolicyTests {
 		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 
 		// find way point anchor
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
@@ -3331,7 +3325,7 @@ public class BendConnectionPolicyTests {
 		final AnchoragePart startAnchorage = sourceAnchorage;
 		final AnchoragePart endAnchorage = targetAnchorage;
 
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 
 		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
@@ -3467,7 +3461,7 @@ public class BendConnectionPolicyTests {
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 
 		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
@@ -3670,7 +3664,7 @@ public class BendConnectionPolicyTests {
 		// query bend policy for first connection
 		final ConnectionPart connection = (ConnectionPart) viewer.getContentPartMap()
 				.get(contents.get(contents.size() - 1));
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 
 		assertEquals(2, connection.getVisual().getPointsUnmodifiable().size());
 
@@ -3885,7 +3879,7 @@ public class BendConnectionPolicyTests {
 		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 
 		// find way point anchor
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {
@@ -3977,7 +3971,7 @@ public class BendConnectionPolicyTests {
 		assertEquals(3, connection.getVisual().getPointsUnmodifiable().size());
 
 		// find way point anchor
-		final BendConnectionPolicy bendPolicy = connection.getAdapter(BendConnectionPolicy.class);
+		final BendConnectionPolicyEx bendPolicy = connection.getAdapter(BendConnectionPolicyEx.class);
 		ctx.runAndWait(new Runnable() {
 			@Override
 			public void run() {

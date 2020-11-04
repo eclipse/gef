@@ -39,15 +39,12 @@ import org.eclipse.gef.mvc.examples.logo.parts.MvcLogoExampleSelectionHandlePart
 import org.eclipse.gef.mvc.examples.logo.parts.PaletteRootPart;
 import org.eclipse.gef.mvc.examples.logo.policies.ContentRestrictedChangeViewportPolicy;
 import org.eclipse.gef.mvc.fx.MvcFxModule;
-import org.eclipse.gef.mvc.fx.behaviors.ConnectionClickableAreaBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.ContentPartPool;
 import org.eclipse.gef.mvc.fx.behaviors.FocusBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.HoverIntentBehavior;
 import org.eclipse.gef.mvc.fx.behaviors.SelectionBehavior;
 import org.eclipse.gef.mvc.fx.domain.IDomain;
-import org.eclipse.gef.mvc.fx.handlers.BendFirstAnchorageOnSegmentHandleDragHandler;
-import org.eclipse.gef.mvc.fx.handlers.BendOnSegmentDragHandler;
 import org.eclipse.gef.mvc.fx.handlers.ConnectedSupport;
 import org.eclipse.gef.mvc.fx.handlers.DeleteSelectedOnTypeHandler;
 import org.eclipse.gef.mvc.fx.handlers.FocusAndSelectOnClickHandler;
@@ -62,6 +59,10 @@ import org.eclipse.gef.mvc.fx.handlers.SnapToGeometry;
 import org.eclipse.gef.mvc.fx.handlers.SnapToGrid;
 import org.eclipse.gef.mvc.fx.handlers.TranslateSelectedOnDragHandler;
 import org.eclipse.gef.mvc.fx.handlers.TraverseFocusOnTypeHandler;
+import org.eclipse.gef.mvc.fx.internal.behaviors.BendConnectionPolicyEx;
+import org.eclipse.gef.mvc.fx.internal.behaviors.BendableCurveClickableAreaBehavior;
+import org.eclipse.gef.mvc.fx.internal.handlers.BendFirstAnchorageOnSegmentHandleDragHandlerEx;
+import org.eclipse.gef.mvc.fx.internal.handlers.BendOnSegmentDragHandlerEx;
 import org.eclipse.gef.mvc.fx.models.FocusModel;
 import org.eclipse.gef.mvc.fx.models.HoverModel;
 import org.eclipse.gef.mvc.fx.models.SelectionModel;
@@ -75,7 +76,6 @@ import org.eclipse.gef.mvc.fx.parts.IContentPartFactory;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
 import org.eclipse.gef.mvc.fx.parts.RectangleSegmentHandlePart;
 import org.eclipse.gef.mvc.fx.parts.SquareSegmentHandlePart;
-import org.eclipse.gef.mvc.fx.policies.BendConnectionPolicy;
 import org.eclipse.gef.mvc.fx.policies.ResizePolicy;
 import org.eclipse.gef.mvc.fx.policies.TransformPolicy;
 import org.eclipse.gef.mvc.fx.providers.BoundsSnappingLocationProvider;
@@ -107,7 +107,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	}
 
 	protected void bindCircleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragHandler.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragHandlerEx.class);
 	}
 
 	protected void bindContentPartPoolAsPaletteViewerAdapter(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
@@ -161,9 +161,10 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	}
 
 	protected void bindFXRectangleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragHandler.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragHandlerEx.class);
 	}
 
+	@SuppressWarnings("restriction")
 	protected void bindGeometricCurvePartAdaptersInContentViewerContext(
 			MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
 		// hover on hover
@@ -191,13 +192,13 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		// transaction policy for resize + transform
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ResizePolicy.class);
 
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendConnectionPolicy.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendConnectionPolicyEx.class);
 
 		// interaction handler to relocate on drag
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TranslateSelectedOnDragHandler.class);
 
 		// drag individual segments
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendOnSegmentDragHandler.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendOnSegmentDragHandlerEx.class);
 
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(TransformPolicy.class);
 
@@ -205,7 +206,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CloneCurveSupport.class);
 
 		// clickable area resizing
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(ConnectionClickableAreaBehavior.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendableCurveClickableAreaBehavior.class);
 
 		// clone on shift+click
 		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(CloneOnClickHandler.class);
@@ -431,7 +432,7 @@ public class MvcLogoExampleModule extends MvcFxModule {
 	}
 
 	protected void bindRectangleSegmentHandlePartAdapters(MapBinder<AdapterKey<?>, Object> adapterMapBinder) {
-		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragHandler.class);
+		adapterMapBinder.addBinding(AdapterKey.defaultRole()).to(BendFirstAnchorageOnSegmentHandleDragHandlerEx.class);
 	}
 
 	protected void bindSelectAllOnTypeHandlerAsContentViewerRootPartAdapter(
