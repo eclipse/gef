@@ -12,16 +12,19 @@
  ********************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.labeling;
 
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gef.dot.internal.language.dot.EdgeRhs;
 import org.eclipse.gef.dot.internal.language.dot.EdgeRhsNode;
 import org.eclipse.gef.dot.internal.language.dot.EdgeStmtNode;
 import org.eclipse.gef.dot.internal.language.dot.NodeId;
 import org.eclipse.gef.dot.internal.language.dot.NodeStmt;
 import org.eclipse.gef.dot.internal.ui.language.editor.DotEditorUtils;
-import org.eclipse.xtext.resource.IReferenceDescription;
+import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.resource.XtextResourceSet;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * Provides labels for IEObjectDescriptions and IResourceDescriptions.
@@ -33,10 +36,14 @@ import org.eclipse.xtext.resource.IReferenceDescription;
 public class DotDescriptionLabelProvider
 		extends org.eclipse.xtext.ui.label.DefaultDescriptionLabelProvider {
 
+	@Inject
+	private Provider<XtextResourceSet> resourceSetProvider;
+
 	@Override
-	public Object image(IReferenceDescription referenceDescription) {
+	public Object image(IEObjectDescription element) {
 		String result = ""; //$NON-NLS-1$
-		EObject eObject = getEObject(referenceDescription);
+
+		EObject eObject = getEObject(element);
 
 		if (eObject instanceof NodeId) {
 			EObject container = eObject.eContainer();
@@ -51,14 +58,14 @@ public class DotDescriptionLabelProvider
 			}
 		}
 
-		return !result.isEmpty() ? result : super.image(referenceDescription);
+		return !result.isEmpty() ? result : super.image(element);
 	}
 
 	@Override
-	public Object text(IReferenceDescription referenceDescription) {
+	public Object text(IEObjectDescription element) {
 		StringBuilder result = new StringBuilder();
 
-		EObject eObject = getEObject(referenceDescription);
+		EObject eObject = getEObject(element);
 		if (eObject instanceof NodeId) {
 			NodeId node1 = (NodeId) eObject;
 			EObject container = eObject.eContainer();
@@ -94,12 +101,15 @@ public class DotDescriptionLabelProvider
 		String resultText = result.toString();
 
 		return !resultText.isEmpty() ? DotEditorUtils.style(resultText)
-				: super.text(referenceDescription);
+				: super.text(element);
 	}
 
-	private EObject getEObject(IReferenceDescription referenceDescription) {
-		URI sourceUri = referenceDescription.getSourceEObjectUri();
-		EObject eObject = new ResourceSetImpl().getEObject(sourceUri, true);
+	private EObject getEObject(IEObjectDescription element) {
+		EObject eObject = element.getEObjectOrProxy();
+		if (eObject.eIsProxy()) {
+			XtextResourceSet resourceSet = resourceSetProvider.get();
+			eObject = EcoreUtil.resolve(eObject, resourceSet);
+		}
 		return eObject;
 	}
 }

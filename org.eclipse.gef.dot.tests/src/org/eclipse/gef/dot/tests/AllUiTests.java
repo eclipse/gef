@@ -46,6 +46,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		DotColorListContentAssistLexerTest.class,
 		DotColorListHighlightingLexerTest.class, DotContentAssist2Test.class,
 		DotContentAssistLexerTest.class, DotContentAssistTest.class,
+		DotDescriptionLabelProviderTest.class,
 		DotEditorDoubleClickingTest.class, DotEditorTest.class,
 		DotFoldingTest.class, DotGraphViewTest.class,
 		DotHighlightingCalculatorTest.class, DotHighlightingLexerTest.class,
