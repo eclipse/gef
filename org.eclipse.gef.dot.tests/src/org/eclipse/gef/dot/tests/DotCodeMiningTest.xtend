@@ -347,7 +347,7 @@ class DotCodeMiningTest extends AbstractCodeMiningTest {
 		'''.testCodeMining('''
 			3 nodes | 4 edges
 			digraph {
-				node[shape=square style="bold, filled" fillcolor="orange"]
+				node[shape=square style="bold, filled" fillcolor="orange" ]
 				
 				// nodes
 				1[label="+" tooltip=3]
@@ -361,7 +361,7 @@ class DotCodeMiningTest extends AbstractCodeMiningTest {
 				
 				// backward edges
 				{
-					edge[arrowhead=normal color=green4 style=dashed]
+					edge[arrowhead=normal color=green4  style=dashed]
 					2->1[label=1]
 					3->1[label=2]
 				}
