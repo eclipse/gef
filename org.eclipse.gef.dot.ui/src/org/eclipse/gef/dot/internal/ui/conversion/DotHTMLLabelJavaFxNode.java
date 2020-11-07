@@ -536,7 +536,7 @@ class DotHTMLLabelJavaFxNode {
 		css.append(
 				bordercolor != null
 						? colorUtil.computeZestColor(colorscheme,
-								colorUtil.computeHtmlColor(
+								colorUtil.parseColorAttributeValue(
 										unquotedValueForAttr(bordercolor)))
 						: "black"); //$NON-NLS-1$
 		css.append(";"); //$NON-NLS-1$
@@ -568,7 +568,7 @@ class DotHTMLLabelJavaFxNode {
 			List<String> colors = Arrays
 					.stream(unquotedValueForAttr(bgcolor).split(":")) //$NON-NLS-1$
 					.map(e -> colorUtil.computeZestColor(colorscheme,
-							colorUtil.computeHtmlColor(e)))
+							colorUtil.parseColorAttributeValue(e)))
 					.collect(Collectors.toList());
 			if (colors.size() > 1) {
 				if (style != null && unquotedValueForAttr(style).toLowerCase()
@@ -808,7 +808,8 @@ class DotHTMLLabelJavaFxNode {
 			updateTagStyle(
 					face != null ? fontUtil.parseHtmlFontFace(face) : null,
 					size != null ? Double.valueOf(size) : null,
-					color != null ? colorUtil.computeHtmlColor(color) : null);
+					color != null ? colorUtil.parseColorAttributeValue(color)
+							: null);
 		}
 
 		public void updateTagStyle(FontName face, Double size, Color color) {

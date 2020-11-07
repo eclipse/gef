@@ -95,20 +95,20 @@ public class DotColorUtil {
 	}
 
 	/**
-	 * Returns the {@link Color} of a HTML-like label color attribute
+	 * Creates a {@link Color} object of a color attribute value.
 	 *
-	 * @param htmlColor
+	 * @param colorAttributeValue
 	 *            The string attribute value.
-	 * @return The corresponding {@link Color}.
+	 * @return The corresponding {@link Color} object.
 	 */
-	public Color computeHtmlColor(String htmlColor) {
-		if (htmlColor == null) {
+	public Color parseColorAttributeValue(String colorAttributeValue) {
+		if (colorAttributeValue == null) {
 			return null;
 		}
 		IParser parser = DotActivator.getInstance().getInjector(
 				DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTCOLOR)
 				.getInstance(IParser.class);
-		EObject rootNode = parser.parse(new StringReader(htmlColor))
+		EObject rootNode = parser.parse(new StringReader(colorAttributeValue))
 				.getRootASTElement();
 		if (rootNode instanceof Color) {
 			return (Color) rootNode;
