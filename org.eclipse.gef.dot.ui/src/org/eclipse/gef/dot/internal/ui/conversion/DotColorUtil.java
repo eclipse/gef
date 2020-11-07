@@ -17,6 +17,8 @@
 package org.eclipse.gef.dot.internal.ui.conversion;
 
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.language.color.Color;
@@ -24,6 +26,9 @@ import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.language.color.HSVColor;
 import org.eclipse.gef.dot.internal.language.color.RGBColor;
 import org.eclipse.gef.dot.internal.language.color.StringColor;
+import org.eclipse.gef.dot.internal.language.colorlist.ColorList;
+import org.eclipse.gef.dot.internal.language.colorlist.WC;
+import org.eclipse.gef.dot.internal.language.dot.Attribute;
 import org.eclipse.gef.dot.internal.ui.language.DotActivator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.xtext.parser.IParser;
@@ -115,6 +120,59 @@ public class DotColorUtil {
 			return (Color) rootNode;
 		}
 		return null;
+	}
+
+	/**
+	 * Creates a list of {@link Color} objects of a color list attribute value.
+	 *
+	 * @param colorListAttributeValue
+	 *            The string attribute value.
+	 * @return List of the corresponding {@link Color} objects.
+	 */
+	public List<Color> parseColorListAttributeValue(
+			String colorListAttributeValue) {
+		if (colorListAttributeValue == null) {
+			return null;
+		}
+		IParser parser = DotActivator.getInstance().getInjector(
+				DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTCOLORLIST)
+				.getInstance(IParser.class);
+		EObject rootNode = parser
+				.parse(new StringReader(colorListAttributeValue))
+				.getRootASTElement();
+		if (rootNode instanceof ColorList) {
+			ColorList colorList = (ColorList) rootNode;
+			List<Color> colors = new ArrayList<>();
+			for (WC wc : colorList.getColorValues()) {
+				Color color = wc.getColor();
+				colors.add(color);
+			}
+			return colors;
+		}
+		return null;
+	}
+
+	public DotColorInfo getColorInfo(Attribute attribute) {
+		org.eclipse.gef.dot.internal.language.color.Color dotColor = parseColorAttributeValue(
+				attribute.getValue().toValue());
+		DotColorInfo colorInfo = new DotColorInfo(attribute, dotColor);
+		colorInfo.calculate();
+		return colorInfo;
+	}
+
+	public List<DotColorInfo> getColorInfos(Attribute attribute) {
+		List<DotColorInfo> colorInfos = new ArrayList<>();
+
+		List<org.eclipse.gef.dot.internal.language.color.Color> dotColors = parseColorListAttributeValue(
+				attribute.getValue().toValue());
+
+		for (Color dotColor : dotColors) {
+			DotColorInfo colorInfo = new DotColorInfo(attribute, dotColor);
+			colorInfo.calculate();
+			colorInfos.add(colorInfo);
+		}
+
+		return colorInfos;
 	}
 
 	public org.eclipse.swt.graphics.Color hex2Rgb(String colorStr) {

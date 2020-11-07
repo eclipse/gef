@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2020 itemis AG and others.
+ * Copyright (c) 2020 itemis AG and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -8,13 +8,9 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Zoey Prigge    (itemis AG) - initial API and refactoring (bug #549412)
- *     Tamas Miklossy (itemis AG) - original implementation in DotHoverProvider
- *
+ *    Tamas Miklossy (itemis AG) - initial API and implementation
  *******************************************************************************/
-package org.eclipse.gef.dot.internal.ui.language.hover;
-
-import java.io.StringReader;
+package org.eclipse.gef.dot.internal.ui.conversion;
 
 import org.eclipse.gef.dot.internal.language.DotAstHelper;
 import org.eclipse.gef.dot.internal.language.color.Color;
@@ -23,25 +19,41 @@ import org.eclipse.gef.dot.internal.language.color.HSVColor;
 import org.eclipse.gef.dot.internal.language.color.RGBColor;
 import org.eclipse.gef.dot.internal.language.color.StringColor;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
-import org.eclipse.gef.dot.internal.language.terminals.ID;
-import org.eclipse.gef.dot.internal.ui.language.DotActivator;
-import org.eclipse.xtext.parser.IParseResult;
-import org.eclipse.xtext.parser.IParser;
 
-import com.google.inject.Injector;
+public class DotColorInfo {
 
-public class DotHoverUtils {
-	static String colorDescription(Attribute color, ID attributeValue) {
-		return colorDescription(color, attributeValue.toString(),
-				attributeValue.toValue());
+	private Attribute attribute;
+	private Color color;
+
+	/**
+	 * The name of the color scheme, can be null.
+	 */
+	private String colorScheme;
+
+	/**
+	 * The name of the color, can be null.
+	 */
+	private String colorName;
+
+	/**
+	 * The hex code of the color, should not be null.
+	 */
+	private String colorCode;
+
+	public DotColorInfo(Attribute attribute, Color color) {
+		this.attribute = attribute;
+		this.color = color;
 	}
 
-	static String colorDescription(Attribute attribute, String encoded,
-			String value) {
-		Color color = parse(encoded);
-		String colorScheme = null;
-		String colorName = null;
-		String colorCode = null;
+	public void calculate() {
+		calculate(attribute.getValue().toValue());
+	}
+
+	public void calculate(String value) {
+		if (color == null) {
+			return;
+		}
+
 		if (color instanceof StringColor) {
 			StringColor stringColor = (StringColor) color;
 			colorScheme = stringColor.getScheme();
@@ -61,16 +73,17 @@ public class DotHoverUtils {
 		if (color instanceof HSVColor) {
 			// TODO: implement
 		}
-		return DotColors.getColorDescription(colorScheme, colorName, colorCode);
 	}
 
-	static private Color parse(String attributeValue) {
-		Injector dotColorInjector = DotActivator.getInstance().getInjector(
-				DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTCOLOR);
-		IParser parser = dotColorInjector.getInstance(IParser.class);
+	public String getColorScheme() {
+		return colorScheme;
+	}
 
-		IParseResult result = parser.parse(new StringReader(attributeValue));
+	public String getColorName() {
+		return colorName;
+	}
 
-		return (Color) result.getRootASTElement();
+	public String getColorCode() {
+		return colorCode;
 	}
 }
