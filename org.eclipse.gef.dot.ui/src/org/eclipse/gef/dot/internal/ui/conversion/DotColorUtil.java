@@ -25,6 +25,7 @@ import org.eclipse.gef.dot.internal.language.color.HSVColor;
 import org.eclipse.gef.dot.internal.language.color.RGBColor;
 import org.eclipse.gef.dot.internal.language.color.StringColor;
 import org.eclipse.gef.dot.internal.ui.language.DotActivator;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.xtext.parser.IParser;
 
 public class DotColorUtil {
@@ -114,5 +115,12 @@ public class DotColorUtil {
 			return (Color) rootNode;
 		}
 		return null;
+	}
+
+	public org.eclipse.swt.graphics.Color hex2Rgb(String colorStr) {
+		return new org.eclipse.swt.graphics.Color(Display.getDefault(),
+				Integer.valueOf(colorStr.substring(1, 3), 16),
+				Integer.valueOf(colorStr.substring(3, 5), 16),
+				Integer.valueOf(colorStr.substring(5, 7), 16));
 	}
 }

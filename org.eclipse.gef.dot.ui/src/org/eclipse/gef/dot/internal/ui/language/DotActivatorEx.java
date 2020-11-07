@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.gef.dot.internal.language.color.DotColors;
 import org.eclipse.gef.dot.internal.ui.DotUiMessages;
+import org.eclipse.gef.dot.internal.ui.conversion.DotColorUtil;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
@@ -92,7 +93,7 @@ public class DotActivatorEx extends DotActivator {
 		Display display = Display.getDefault();
 		Image image = new Image(display, 16, 16);
 		GC gc = new GC(image);
-		Color color = hex2Rgb(display, colorCode);
+		Color color = new DotColorUtil().hex2Rgb(colorCode);
 
 		gc.setBackground(color);
 		gc.fillRectangle(1, 1, 14, 14);
@@ -107,9 +108,4 @@ public class DotActivatorEx extends DotActivator {
 		return image;
 	}
 
-	private Color hex2Rgb(Display display, String colorStr) {
-		return new Color(display, Integer.valueOf(colorStr.substring(1, 3), 16),
-				Integer.valueOf(colorStr.substring(3, 5), 16),
-				Integer.valueOf(colorStr.substring(5, 7), 16));
-	}
 }
