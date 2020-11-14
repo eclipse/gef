@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.highlighting;
 
+import java.util.List;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.dot.internal.DotAttributes;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
@@ -41,6 +43,9 @@ public class DotSemanticHighlightingCalculator
 
 		// It gets a node model.
 		INode root = resource.getParseResult().getRootNode();
+
+		String dotText = root.getText();
+
 		for (INode node : root.getAsTreeIterable()) {
 			EObject grammarElement = node.getGrammarElement();
 			if (grammarElement instanceof RuleCall) {
@@ -91,7 +96,7 @@ public class DotSemanticHighlightingCalculator
 							DotHighlightingConfiguration.EDGE_OP_ID);
 				}
 				if (r.getName().equals("HTML_STRING")) { //$NON-NLS-1$
-					provideHighlightingForHtmlString(node, acceptor);
+					provideHighlightingForHtmlString(node, dotText, acceptor);
 				}
 			}
 		}
@@ -122,7 +127,7 @@ public class DotSemanticHighlightingCalculator
 				acceptor, suffix);
 	}
 
-	private void provideHighlightingForHtmlString(INode node,
+	private void provideHighlightingForHtmlString(INode node, String dotText,
 			IHighlightedPositionAcceptor acceptor) {
 		// highlight the leading '<' symbol
 		int openingSymbolOffset = node.getOffset();
@@ -136,14 +141,44 @@ public class DotSemanticHighlightingCalculator
 				DotHighlightingConfiguration.HTML_TAG);
 
 		// trim the leading '<' and trailing '>' symbols
-		String htmlString = node.getText().substring(1,
-				node.getText().length() - 1);
+		String htmlText = node.getText();
+
+		// highlight the html indentations
+		List<TextLine> htmlTextLines = TextLines.splitString(htmlText);
+		int htmlTextStartOffset = node.getOffset();
+		int indentationLength = getIndentationLength(node, dotText);
+		/*
+		 * do not hightlight the leading '<' and trailing '>' symbols, skipping
+		 * the first and the last line
+		 */
+		for (int i = 1; i < htmlTextLines.size() - 1; i++) {
+			TextLine htmlTextLine = htmlTextLines.get(i);
+			int offset = htmlTextStartOffset + htmlTextLine.getRelativeOffset()
+					+ indentationLength;
+			int length = htmlTextLine.getLeadingWhiteSpace().length()
+					- indentationLength;
+			acceptor.addPosition(offset, length,
+					DotHighlightingConfiguration.HTML_INDENTATION);
+		}
 
 		// delegate the highlighting of the the html-label substring to the
 		// corresponding sub-grammar highlighter
+		String htmlString = htmlText.substring(1, htmlText.length() - 1);
 		DotSubgrammarHighlighter htmlLabelHighlighter = new DotSubgrammarHighlighter(
 				DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTHTMLLABEL);
 		htmlLabelHighlighter.provideHightlightingFor(htmlString,
 				node.getOffset() + 1, acceptor);
+	}
+
+	/**
+	 * Get the indentation length of the line containing the leading '<' symbol.
+	 */
+	private int getIndentationLength(INode htmlTextNode, String dotText) {
+		int htmlTextStartLine = htmlTextNode.getStartLine();
+		List<TextLine> dotTextLines = TextLines.splitString(dotText);
+		TextLine lineContainingTheLeadingAngleSymbol = dotTextLines
+				.get(htmlTextStartLine - 1);
+		return lineContainingTheLeadingAngleSymbol.getLeadingWhiteSpace()
+				.length();
 	}
 }

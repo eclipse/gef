@@ -40,6 +40,7 @@ public class DotHighlightingConfiguration
 	public static final String HTML_ATTRIBUTE_VALUE = "html_attribute_value"; //$NON-NLS-1$
 	public static final String HTML_CONTENT = "html_content"; //$NON-NLS-1$
 	public static final String HTML_COMMENT = "html_comment"; //$NON-NLS-1$
+	public static final String HTML_INDENTATION = "html_indentation"; //$NON-NLS-1$
 
 	public static final String DEPRECATED_ATTRIBUTE_VALUE = "deprecated_attribute_value"; //$NON-NLS-1$
 	public static final String QUOTED_SUFFIX = "_quoted"; //$NON-NLS-1$
@@ -97,6 +98,8 @@ public class DotHighlightingConfiguration
 				htmlContentStyle());
 		acceptor.acceptDefaultHighlighting(HTML_COMMENT, "Html Comment", //$NON-NLS-1$
 				htmlCommentStyle());
+		acceptor.acceptDefaultHighlighting(HTML_INDENTATION, "Html Indentation", //$NON-NLS-1$
+				htmlIndentationStyle());
 
 		// deprecated highlighting
 		acceptor.acceptDefaultHighlighting(DEPRECATED_ATTRIBUTE_VALUE,
@@ -189,6 +192,12 @@ public class DotHighlightingConfiguration
 	private TextStyle htmlCommentStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setColor(new RGB(63, 95, 191)); // turquoise blue
+		return textStyle;
+	}
+
+	private TextStyle htmlIndentationStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setBackgroundColor(new RGB(220, 220, 220)); // grey
 		return textStyle;
 	}
 
