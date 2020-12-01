@@ -25,3 +25,5 @@
 1. If this was a GA release, draft a new release on [GitHub](https://github.com/eclipse/gef).
 
 1. In case of a GA release, adapt the default values in the promote.Jenkinsifle to use the new versions. When the new values are on the master branch, run a single Release-Promotion for an integration build, applying those values manually. After that, new Release-Promotion runs should use the new default values.
+
+1. Until this gets automated: If M1 is promoted, all milestones and integration builds from the previous release should be removed (update-site and drop location).
