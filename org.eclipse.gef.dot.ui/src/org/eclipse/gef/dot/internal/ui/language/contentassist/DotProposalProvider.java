@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2020 itemis AG and others.
+ * Copyright (c) 2010, 2021 itemis AG and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -306,13 +306,16 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			ICompletionProposalAcceptor acceptor) {
 		if (model instanceof Attribute) {
 			Attribute attribute = (Attribute) model;
+			Context attributeContext = DotAttributes.getContext(attribute);
+			String attributeName = attribute.getName().toValue();
 
 			context = context.copy()
 					.setMatcher(new AttributeValueMatcher(context.getMatcher()))
 					.toContext();
 
-			if (DotAttributes.getContext(attribute) == Context.EDGE) {
-				switch (attribute.getName().toValue()) {
+			switch (attributeContext) {
+			case EDGE:
+				switch (attributeName) {
 				case DotAttributes.ARROWHEAD__E:
 				case DotAttributes.ARROWTAIL__E:
 					proposeAttributeValues(
@@ -385,8 +388,9 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							acceptor);
 					break;
 				}
-			} else if (DotAttributes.getContext(attribute) == Context.GRAPH) {
-				switch (attribute.getName().toValue()) {
+				break;
+			case GRAPH:
+				switch (attributeName) {
 				case DotAttributes.BGCOLOR__GC:
 					proposeColorListAttributeValues(attribute, context,
 							acceptor);
@@ -438,8 +442,9 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							acceptor);
 					break;
 				}
-			} else if (DotAttributes.getContext(attribute) == Context.NODE) {
-				switch (attribute.getName().toValue()) {
+				break;
+			case NODE:
+				switch (attributeName) {
 				case DotAttributes.COLOR__CNE:
 					proposeColorAttributeValues(attribute, context, acceptor);
 					break;
@@ -488,8 +493,9 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				default:
 					break;
 				}
-			} else if (DotAttributes.getContext(attribute) == Context.CLUSTER) {
-				switch (attribute.getName().toValue()) {
+				break;
+			case CLUSTER:
+				switch (attributeName) {
 				case DotAttributes.BGCOLOR__GC:
 					proposeColorListAttributeValues(attribute, context,
 							acceptor);
@@ -525,17 +531,15 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 							DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTESCSTRING,
 							context, acceptor);
 				}
-			} else if (DotAttributes
-					.getContext(attribute) == Context.SUBGRAPH) {
-				switch (attribute.getName().toValue()) {
+				break;
+			case SUBGRAPH:
+				switch (attributeName) {
 				case DotAttributes.RANK__S:
 					proposeAttributeValues(RankType.values(), context,
 							acceptor);
 					break;
 				}
-			}
-
-			else {
+			default:
 				super.completeAttribute_Value(model, assignment, context,
 						acceptor);
 			}
