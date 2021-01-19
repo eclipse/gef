@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2020 itemis AG and others.
+ * Copyright (c) 2016, 2021 itemis AG and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -3019,6 +3019,19 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 			}
 		''')
 
+		'''
+			graph {
+				1[color="blue"«c»]
+			}
+		'''.testContentAssistant(#[",", ";", "]", "color", "colorscheme", "distortion", "fillcolor", "fixedsize", "fontcolor", "fontname", "fontsize",
+								"height", "id", "label", "penwidth", "pos", "shape", "sides", "skew", "style", "tooltip", "width",
+								"xlabel", "xlp"], "fixedsize",
+		'''
+			graph {
+				1[color="blue"fixedsize=]
+			}
+		''')
+
 		// test local attribute names with prefix
 		'''
 			graph {
@@ -3051,6 +3064,16 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 		'''.testContentAssistant(combine(expectedX11ColorNames, #["#", "/"]), "#", '''
 			graph {
 				1[ color=# ]
+			}
+		''')
+
+		'''
+			graph {
+				1[ color=«c»"" ]
+			}
+		'''.testContentAssistant(combine(expectedX11ColorNames, #["#", "/"]), "#", '''
+			graph {
+				1[ color=#"" ]
 			}
 		''')
 
@@ -3458,6 +3481,18 @@ class DotContentAssistTest extends AbstractContentAssistTest {
 		''')
 
 		// test html-like label attribute
+		'''
+			graph {
+				1[ label=«c»<> ]
+			}
+		'''.testContentAssistant(#["HTMLLabel - Insert a template"], "HTMLLabel - Insert a template", '''
+			graph {
+				1[ label=<
+					
+				><> ]
+			}
+		''')
+
 		'''
 			graph {
 				1[ label=<

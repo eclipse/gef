@@ -21,6 +21,8 @@
  *******************************************************************************/
 package org.eclipse.gef.dot.internal.ui.language.contentassist;
 
+import static org.eclipse.gef.dot.internal.language.dot.DotPackage.Literals.ATTRIBUTE__VALUE;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -69,6 +71,7 @@ import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.nodemodel.INode;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal.IReplacementTextApplier;
@@ -312,6 +315,28 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 			context = context.copy()
 					.setMatcher(new AttributeValueMatcher(context.getMatcher()))
 					.toContext();
+
+			/*
+			 * do not propose any attribute values if it is already properly
+			 * enclosed with double quotes and the cursor is located directly
+			 * after the closing quote
+			 */
+			ID attributeValue = attribute.getValue();
+			if (attributeValue != null) {
+				String attributeValueText = attributeValue.toString();
+				int cursorPosition = context.getOffset();
+
+				int attributeValueEndOffset = NodeModelUtils
+						.findNodesForFeature(attribute, ATTRIBUTE__VALUE).get(0)
+						.getTotalEndOffset();
+
+				if (attributeValueText.startsWith("\"") //$NON-NLS-1$
+						&& attributeValueText.endsWith("\"") //$NON-NLS-1$
+						&& attributeValueText.length() > 1
+						&& cursorPosition >= attributeValueEndOffset) {
+					return;
+				}
+			}
 
 			switch (attributeContext) {
 			case EDGE:
@@ -600,7 +625,9 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 				} else {
 					text = text.substring(1, text.length() - 1);
 				}
-				offset++;
+				if (context.getOffset() > offset) {
+					offset++;
+				}
 			}
 		}
 
@@ -681,11 +708,22 @@ public class DotProposalProvider extends AbstractDotProposalProvider {
 		DotColorProposalProvider.globalColorScheme = DotAstHelper
 				.getColorSchemeAttributeValue(attribute);
 
-		if (attribute.getValue() != null
-				&& attribute.getValue().getType() == Type.HTML_STRING) {
-			proposeAttributeValues(
-					DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTHTMLLABEL,
-					context, acceptor);
+		ID attributeValue = attribute.getValue();
+		if (attributeValue != null) {
+			int cursorPosition = context.getOffset();
+			int attributeValueStartOffset = NodeModelUtils
+					.findNodesForFeature(attribute, ATTRIBUTE__VALUE).get(0)
+					.getOffset();
+			/*
+			 * do not propose the html-label values if the attribute value is
+			 * set, but the cursor is located before it
+			 */
+			if (cursorPosition > attributeValueStartOffset
+					&& attributeValue.getType() == Type.HTML_STRING) {
+				proposeAttributeValues(
+						DotActivator.ORG_ECLIPSE_GEF_DOT_INTERNAL_LANGUAGE_DOTHTMLLABEL,
+						context, acceptor);
+			}
 		}
 
 		// reset the state of the DotColorProposalProvider
