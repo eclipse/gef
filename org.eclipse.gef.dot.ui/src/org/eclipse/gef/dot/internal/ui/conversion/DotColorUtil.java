@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2020 itemis AG and others.
+ * Copyright (c) 2018, 2021 itemis AG and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -29,6 +29,7 @@ import org.eclipse.gef.dot.internal.language.color.StringColor;
 import org.eclipse.gef.dot.internal.language.colorlist.ColorList;
 import org.eclipse.gef.dot.internal.language.colorlist.WC;
 import org.eclipse.gef.dot.internal.language.dot.Attribute;
+import org.eclipse.gef.dot.internal.language.terminals.ID;
 import org.eclipse.gef.dot.internal.ui.language.DotActivator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.xtext.parser.IParser;
@@ -163,13 +164,17 @@ public class DotColorUtil {
 	public List<DotColorInfo> getColorInfos(Attribute attribute) {
 		List<DotColorInfo> colorInfos = new ArrayList<>();
 
-		List<org.eclipse.gef.dot.internal.language.color.Color> dotColors = parseColorListAttributeValue(
-				attribute.getValue().toValue());
+		ID attributeValue = attribute.getValue();
 
-		for (Color dotColor : dotColors) {
-			DotColorInfo colorInfo = new DotColorInfo(attribute, dotColor);
-			colorInfo.calculate();
-			colorInfos.add(colorInfo);
+		if (attributeValue != null) {
+			List<org.eclipse.gef.dot.internal.language.color.Color> dotColors = parseColorListAttributeValue(
+					attributeValue.toValue());
+
+			for (Color dotColor : dotColors) {
+				DotColorInfo colorInfo = new DotColorInfo(attribute, dotColor);
+				colorInfo.calculate();
+				colorInfos.add(colorInfo);
+			}
 		}
 
 		return colorInfos;

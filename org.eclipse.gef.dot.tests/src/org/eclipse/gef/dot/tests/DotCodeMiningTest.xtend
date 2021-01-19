@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 itemis AG and others.
+ * Copyright (c) 2020, 2021 itemis AG and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -365,6 +365,19 @@ class DotCodeMiningTest extends AbstractCodeMiningTest {
 					2->1[label=1]
 					3->1[label=2]
 				}
+			}
+		''')
+	}
+
+	@Test def code_mining_021() {
+		'''
+			graph {
+				1[color="" fillcolor=]
+			}
+		'''.testCodeMining('''
+			1 node | 0 edges
+			graph {
+				1[color="" fillcolor=]
 			}
 		''')
 	}
