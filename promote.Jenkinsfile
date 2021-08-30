@@ -299,11 +299,11 @@ pipeline {
   }
 
   post {
-    always {
+    unsuccessful {
       mail(
         to: "prediger@itemis.de",
-        subject: "(GEF) Promotion Pipeline Finished",
-        body: "Just testing for now!"
+        subject: "(GEF) Promotion Pipeline did not finish successfully.",
+        body: "There seems to be a problem with the release: $BUILD_URL"
       )
     }
   }
