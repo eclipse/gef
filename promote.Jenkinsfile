@@ -195,7 +195,7 @@ pipeline {
 
               if ssh genie.gef@projects-storage.eclipse.org "test -e ${REMOTE_UPDATE_SITE}/${UPDATE_SITE_LABEL}";
               then
-                echo "WARNING: Skipping promotion to drop location, because target already exists!"
+                echo "WARNING: Skipping promotion to update site, because target already exists!"
                 echo "WARNING: If you want to redeploy, (re)move or rename the target first."
               else
 
@@ -292,6 +292,24 @@ pipeline {
                 '''
               fi
             fi
+          """
+
+          sh label: "Print versions relevant to SimRel", script: """
+            set -eo pipefail
+            ssh genie.gef@projects-storage.eclipse.org '''
+              cd ${REMOTE_UPDATE_SITE}/${UPDATE_SITE_LABEL}/features
+              ls org.eclipse.gef.geometry.sdk*
+              ls org.eclipse.gef.graph.sdk*
+              ls org.eclipse.gef.common.sdk*
+              ls org.eclipse.gef.layout.sdk*
+              ls org.eclipse.gef.dot.sdk*
+              ls org.eclipse.gef.dot.user*
+              ls org.eclipse.gef.fx.sdk*
+              ls org.eclipse.gef.mvc.sdk*
+              ls org.eclipse.gef.zest.sdk*
+              ls org.eclipse.gef.cloudio.sdk*
+              ls org.eclipse.gef.cloudio.user*
+            '''
           """
         }
       }
