@@ -54,7 +54,7 @@ pipeline {
     )
     string(
       name: "RELEASE_LABEL",
-      defaultValue: "5.3.5",
+      defaultValue: "5.3.6",
       description: """
         The release label used to label the (nested) update site,
         e.g.: 3.10.0, 3.10.1, 4.0.0
