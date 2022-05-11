@@ -22,6 +22,7 @@
  *		Zoey Gerrit Prigge	- integration of record label sub-grammar (bug #454629)
  *							- integration of dot font name emf model and grammar (bug #542663)
  *							- support for file and project wizard, gv file extension
+ * 		Markus Mühlbrandt	- migration to new generator architecture
  *
  *******************************************************************************/
 module org.eclipse.gef.dot.internal.language.Dot
@@ -140,13 +141,10 @@ Workflow {
 			}
 
 			resourceFactoryFragment = {}
-
-			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-					// A grammar file with .g will be expected in this package (should be stored in src folder)
-					lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotLexer"
-					runtime = true
-				}
+			fragment = org.eclipse.xtext.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
+				// A grammar file with .g will be expected in this package (should be stored in src folder)
+				lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotLexer"
+				runtime = true
 			}
 
 			validator = {}
@@ -164,19 +162,14 @@ Workflow {
 			quickFixProvider = {}
 
 			contentAssist = {}
-
-			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.contentassist.antlr.lexer.CustomContentAssistInternalDotLexer"
-					contentAssist = true
-				}
+			fragment = org.eclipse.xtext.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
+				lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.contentassist.antlr.lexer.CustomContentAssistInternalDotLexer"
+				contentAssist = true
 			}
-
-			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.highlighting.antlr.lexer.CustomHighlightingInternalDotLexer"
-					highlighting = true
-				}
+			
+			fragment = org.eclipse.xtext.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
+				lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.highlighting.antlr.lexer.CustomHighlightingInternalDotLexer"
+				highlighting = true
 			}
 
 			renameRefactoring = {}
@@ -277,30 +270,24 @@ Workflow {
 						backtrackLexer = false
 					}
 			}
-
+			
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the runtime module to use the Lexer
-			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-					// A grammar file with .g will be expected in this package (should be stored in src folder)
-					lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotColorLexer"
-					runtime = true
-				}
+			fragment = org.eclipse.xtext.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
+				// A grammar file with .g will be expected in this package (should be stored in src folder)
+				lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotColorLexer"
+				runtime = true
 			}
 
 			contentAssist = {}
-
-			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.contentassist.antlr.lexer.CustomContentAssistInternalDotColorLexer"
-					contentAssist = true
-				}
+			
+			fragment = org.eclipse.xtext.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
+				lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.contentassist.antlr.lexer.CustomContentAssistInternalDotColorLexer"
+				contentAssist = true
 			}
-
-			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.highlighting.antlr.lexer.CustomHighlightingInternalDotColorLexer"
-					highlighting = true
-				}
+			
+			fragment = org.eclipse.xtext.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
+				lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.highlighting.antlr.lexer.CustomHighlightingInternalDotColorLexer"
+				highlighting = true
 			}
 
 			junitSupport = {
@@ -351,36 +338,29 @@ Workflow {
 						backtrackLexer = false
 					}
 			}
-
+			
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the runtime module to use the Lexer
-			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-					// A grammar file with .g will be expected in this package (should be stored in src folder)
-					lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotColorListLexer"
-					runtime = true
-				}
-
+			fragment = org.eclipse.xtext.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
+				// A grammar file with .g will be expected in this package (should be stored in src folder)
+				lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotColorListLexer"
+				runtime = true
 			}
 
 			contentAssist = {
 				generateStub = false
 			}
-
-			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-					// A grammar file with .g will be expected in this package (should be stored in src folder)
-					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.contentassist.antlr.lexer.CustomContentAssistInternalDotColorListLexer"
-					contentAssist = true
-				}
+			
+			fragment = org.eclipse.xtext.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
+				// A grammar file with .g will be expected in this package (should be stored in src folder)
+				lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.contentassist.antlr.lexer.CustomContentAssistInternalDotColorListLexer"
+				contentAssist = true
 			}
-
+			
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the ui module to use the Lexer
-			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-					// A grammar file with .g will be expected in this package (should be stored in src folder)
-					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.highlighting.antlr.lexer.CustomHighlightingInternalDotColorListLexer"
-					highlighting = true
-				}
+			fragment = org.eclipse.xtext.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
+				// A grammar file with .g will be expected in this package (should be stored in src folder)
+				lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.highlighting.antlr.lexer.CustomHighlightingInternalDotColorListLexer"
+				highlighting = true
 			}
 
 			serializer = {
@@ -542,31 +522,25 @@ Workflow {
 				generateStub = false
 			}
 
-			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-					lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotHtmlLabelLexer"
-					runtime = true
-				}
-			}
+			fragment = org.eclipse.xtext.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
+				lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotHtmlLabelLexer"
+				runtime = true
+			}			
 
 			contentAssist = {}
 
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the ui module to use the Lexer
-			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-					// A grammar file with .g will be expected in this package (should be stored in src folder)
-					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.contentassist.antlr.lexer.CustomContentAssistInternalDotHtmlLabelLexer"
-					contentAssist = true
-				}
+			fragment = org.eclipse.xtext.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
+				// A grammar file with .g will be expected in this package (should be stored in src folder)
+				lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.contentassist.antlr.lexer.CustomContentAssistInternalDotHtmlLabelLexer"
+				contentAssist = true
 			}
 
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the ui module to use the Lexer
-			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
-					// A grammar file with .g will be expected in this package (should be stored in src folder)
-					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.highlighting.antlr.lexer.CustomHighlightingInternalDotHtmlLabelLexer"
-					highlighting = true
-				}
+			fragment = org.eclipse.xtext.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
+				// A grammar file with .g will be expected in this package (should be stored in src folder)
+				lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.highlighting.antlr.lexer.CustomHighlightingInternalDotHtmlLabelLexer"
+				highlighting = true
 			}
 
 			renameRefactoring = {}

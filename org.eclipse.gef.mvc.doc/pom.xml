@@ -82,10 +82,10 @@
 	</build>
 	<dependencies>
 		<!-- Add pom dependency to guice-multibindings fragment (so this is added as a api-context-lib)-->
-		<dependency>
+		<!--<dependency>
 			<groupId>com.google.inject.extensions</groupId>
 			<artifactId>guice-multibindings</artifactId>
 			<version>3.0</version>
-		</dependency>
+		</dependency>-->
 	</dependencies>
 </project>

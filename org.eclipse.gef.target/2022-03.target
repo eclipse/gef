@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde?>
+<!-- generated with https://github.com/eclipse-cbi/targetplatform-dsl -->
+<target name="2022-03" sequenceNumber="1653045073">
+  <locations>
+    <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
+      <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="3.7.0.202010120720"/>
+      <unit id="org.eclipse.sdk.ide" version="4.23.0.I20220308-0310"/>
+      <unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.12.2.v20220118-1914"/>
+      <unit id="org.eclipse.xtext.sdk.feature.group" version="2.26.0.v20220228-0901"/>
+      <unit id="org.eclipse.emf.sdk.feature.group" version="2.29.0.v20220226-1304"/>
+      <repository location="https://download.eclipse.org/releases/2022-03"/>
+    </location>
+    <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
+      <unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
+      <repository location="https://download.itemis.com/updates/releases/2.1.1"/>
+    </location>
+    <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
+      <unit id="org.eclipse.license.feature.group" version="2.0.2.v20181016-2210"/>
+      <repository location="https://download.eclipse.org/cbi/updates/license"/>
+    </location>
+    <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
+      <unit id="org.objectweb.asm" version="9.2.0.v20210813-1119"/>
+      <unit id="com.google.inject.assistedinject" version="5.0.1.v20210324-2015"/>
+      <unit id="com.google.inject.assistedinject.source" version="5.0.1.v20210324-2015"/>
+      <unit id="com.google.guava" version="30.1.0.v20210127-2300"/>
+      <unit id="com.google.guava.source" version="30.1.0.v20210127-2300"/>
+      <unit id="com.google.inject" version="5.0.1.v20210324-2015"/>
+      <unit id="com.google.inject.source" version="5.0.1.v20210324-2015"/>
+      <unit id="javax.xml" version="1.3.4.v201005080400"/>
+      <unit id="org.junit" version="4.13.2.v20211018-1956"/>
+      <unit id="org.junit.source" version="4.13.2.v20211018-1956"/>
+      <repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20220302172233/repository"/>
+    </location>
+  </locations>
+</target>

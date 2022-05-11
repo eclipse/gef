@@ -123,6 +123,7 @@
 				<version>${exec-maven-plugin.version}</version>
 				<executions>
 					<execution>
+						<id>mwe2Launcher</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>java</goal>
@@ -130,18 +131,16 @@
 					</execution>
 				</executions>
 				<configuration>
-					<includeProjectDependencies>false</includeProjectDependencies>
-					<includePluginDependencies>true</includePluginDependencies>
-					<classpathScope>compile</classpathScope>
-					<cleanupDaemonThreads>false</cleanupDaemonThreads>
-					<mainClass>org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher
-					</mainClass>
+					<mainClass>org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher</mainClass>
 					<arguments>
-						<argument>file://${project.basedir}/src/org/eclipse/gef/dot/internal/language/GenerateDot.mwe2
-						</argument>
+						<argument>file://${project.basedir}/src/org/eclipse/gef/dot/internal/language/GenerateDot.mwe2</argument>
 						<argument>-p</argument>
 						<argument>rootPath=/${project.basedir}/..</argument>
 					</arguments>
+					<classpathScope>compile</classpathScope>
+					<includePluginDependencies>true</includePluginDependencies>
+					<!--<includeProjectDependencies>false</includeProjectDependencies>-->
+					<cleanupDaemonThreads>false</cleanupDaemonThreads>
 				</configuration>
 				<dependencies>
 					<dependency>
@@ -156,23 +155,23 @@
 					</dependency>
 					<dependency>
 						<groupId>org.eclipse.xtext</groupId>
-						<artifactId>org.eclipse.xtext.xbase</artifactId>
-						<version>${xtext.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.eclipse.xtext</groupId>
-						<artifactId>org.eclipse.xtext.generator</artifactId>
-						<version>${xtext.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.eclipse.xtext</groupId>
 						<artifactId>org.eclipse.xtext.xtext.generator</artifactId>
+						<version>${xtext.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.eclipse.xtext</groupId>
+						<artifactId>org.eclipse.xtext.xbase</artifactId>
 						<version>${xtext.version}</version>
 					</dependency>
 					<dependency>
 						<groupId>org.eclipse.xtext</groupId>
 						<artifactId>xtext-antlr-generator</artifactId>
 						<version>${xtext-antlr-generator-version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.eclipse.xtext</groupId>
+						<artifactId>org.eclipse.xtext.generator</artifactId>
+						<version>${xtext.version}</version>
 					</dependency>
 					<dependency>
 						<groupId>org.eclipse.gef.dot</groupId>
