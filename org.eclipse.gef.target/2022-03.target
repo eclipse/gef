@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde?>
 <!-- generated with https://github.com/eclipse-cbi/targetplatform-dsl -->
-<target name="2019-12" sequenceNumber="1651135436">
+<target name="2022-03" sequenceNumber="1651142051">
   <locations>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
-      <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="3.6.0.201907240103"/>
-      <unit id="org.eclipse.sdk.ide" version="4.14.0.I20191210-0610"/>
-      <unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.11.1.v20191121-1148"/>
-      <unit id="org.eclipse.xtext.sdk.feature.group" version="2.20.0.v20191202-1256"/>
-      <unit id="org.eclipse.emf.sdk.feature.group" version="2.20.0.v20191028-0905"/>
-      <repository location="https://download.eclipse.org/releases/2019-12"/>
+      <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="3.7.0.202010120720"/>
+      <unit id="org.eclipse.sdk.ide" version="4.23.0.I20220308-0310"/>
+      <unit id="org.eclipse.emf.mwe2.runtime.sdk.feature.group" version="2.12.2.v20220118-1914"/>
+      <unit id="org.eclipse.xtext.sdk.feature.group" version="2.26.0.v20220228-0901"/>
+      <unit id="org.eclipse.emf.sdk.feature.group" version="2.29.0.v20220226-1304"/>
+      <repository location="https://download.eclipse.org/releases/2022-03"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
@@ -20,19 +20,19 @@
       <repository location="http://download.eclipse.org/cbi/updates/license"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
-      <unit id="org.objectweb.asm" version="7.2.0.v20191010-1910"/>
-      <unit id="com.google.inject.assistedinject" version="3.0.0.v201402270930"/>
-      <unit id="com.google.inject.assistedinject.source" version="3.0.0.v201402270930"/>
-      <unit id="com.google.guava" version="27.1.0.v20190517-1946"/>
-      <unit id="com.google.guava.source" version="27.1.0.v20190517-1946"/>
-      <unit id="com.google.inject" version="3.0.0.v201605172100"/>
-      <unit id="com.google.inject.source" version="3.0.0.v201605172100"/>
+      <unit id="org.objectweb.asm" version="9.2.0.v20210813-1119"/>
+      <unit id="com.google.inject.assistedinject" version="5.0.1.v20210324-2015"/>
+      <unit id="com.google.inject.assistedinject.source" version="5.0.1.v20210324-2015"/>
+      <unit id="com.google.guava" version="30.1.0.v20210127-2300"/>
+      <unit id="com.google.guava.source" version="30.1.0.v20210127-2300"/>
+      <unit id="com.google.inject" version="5.0.1.v20210324-2015"/>
+      <unit id="com.google.inject.source" version="5.0.1.v20210324-2015"/>
       <unit id="com.google.inject.multibindings" version="3.0.0.v201605172100"/>
       <unit id="com.google.inject.multibindings.source" version="3.0.0.v201605172100"/>
       <unit id="javax.xml" version="1.3.4.v201005080400"/>
-      <unit id="org.junit" version="4.12.0.v201504281640"/>
-      <unit id="org.junit.source" version="4.12.0.v201504281640"/>
-      <repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20191126223242/repository"/>
+      <unit id="org.junit" version="4.13.2.v20211018-1956"/>
+      <unit id="org.junit.source" version="4.13.2.v20211018-1956"/>
+      <repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20220302172233/repository"/>
     </location>
   </locations>
 </target>

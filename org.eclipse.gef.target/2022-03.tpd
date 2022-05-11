@@ -1,6 +1,6 @@
-target "2019-12" with source requirements
+target "2022-03" with source requirements
 
-location "https://download.eclipse.org/releases/2019-12" {
+location "https://download.eclipse.org/releases/2022-03" {
 	org.eclipse.fx.runtime.min.feature.feature.group
 	org.eclipse.sdk.ide
 	org.eclipse.emf.mwe2.runtime.sdk.feature.group
@@ -16,7 +16,7 @@ location "http://download.eclipse.org/cbi/updates/license" {
 	org.eclipse.license.feature.group [2.0.2.v20181016-2210,2.1.0)
 }
 
-location "https://download.eclipse.org/tools/orbit/downloads/drops/R20191126223242/repository" {
+location "https://download.eclipse.org/tools/orbit/downloads/drops/R20220302172233/repository" {
 	org.objectweb.asm
 	
 	com.google.inject.assistedinject
