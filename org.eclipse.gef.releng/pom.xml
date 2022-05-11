@@ -22,15 +22,15 @@
 
 	<!-- this is the parent POM from which all modules inherit common settings -->
 	<properties>
-		<maven-resources-plugin.version>2.4</maven-resources-plugin.version>
-		<maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
-		<maven-clean-plugin.version>2.5</maven-clean-plugin.version>
-		<tycho.version>1.5.0</tycho.version>
+		<maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+		<maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
+		<maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
+		<tycho.version>2.3.0</tycho.version>
 		<cbi-plugins.version>1.3.2</cbi-plugins.version>
-		<exec-maven-plugin.version>1.4.0</exec-maven-plugin.version>
-		<xtext.version>2.17.0</xtext.version>
+		<exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+		<xtext.version>2.25.0</xtext.version>
 		<xtext-antlr-generator-version>2.1.1</xtext-antlr-generator-version>
-		<mwe.version>2.10.0</mwe.version>
+		<mwe.version>2.12.2</mwe.version>
 		<wikidoc.skip>true</wikidoc.skip>
 		<os-jvm-flags></os-jvm-flags>
 		<wikidoc.base.path>../../gef.wiki</wikidoc.base.path>
@@ -384,14 +384,14 @@
 								<groupId>org.eclipse.fx.shared</groupId>
 								<artifactId>org.eclipse.fx.osgi</artifactId>
 								<scope>system</scope>
-								<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi_3.6.0.201907240103.jar</systemPath>
+								<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi_3.8.0.202204150815.jar</systemPath>
 								<version>1.0.0</version>
 							</frameworkExtension>
 							<frameworkExtension>
 								<groupId>org.eclipse.fx.runtime</groupId>
 								<artifactId>org.eclipse.fx.osgi.util</artifactId>
 								<scope>system</scope>
-								<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi.util_3.6.0.201907240201.jar</systemPath>
+								<systemPath>${project.parent.basedir}/libs/org.eclipse.fx.osgi.util_3.8.0.202204150819.jar</systemPath>
 								<version>1.0.0</version>
 							</frameworkExtension>
 						</frameworkExtensions>
@@ -411,6 +411,52 @@
 			<properties>
 				<os-jvm-flags>-XstartOnFirstThread</os-jvm-flags>
 			</properties>
+		</profile>
+		<profile>
+			<id>2022-03.target</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>target-platform-configuration</artifactId>
+						<version>${tycho.version}</version>
+						<configuration>
+							<!-- consider pack.gz bundles -->
+							<includePackedArtifacts>true</includePackedArtifacts>
+							<eclipse.p2.mirrors>false</eclipse.p2.mirrors>
+							<!-- add target file content to target platform -->
+							<target>
+								<artifact>
+									<groupId>org.eclipse.gef</groupId>
+									<artifactId>org.eclipse.gef.target</artifactId>
+									<version>5.0.0-SNAPSHOT</version>
+									<classifier>2022-03</classifier>
+								</artifact>
+							</target>
+							<dependency-resolution>
+								<optionalDependencies>require</optionalDependencies>
+							</dependency-resolution>
+							<environments>
+								<environment>
+									<os>linux</os>
+									<ws>gtk</ws>
+									<arch>x86_64</arch>
+								</environment>
+								<environment>
+									<os>win32</os>
+									<ws>win32</ws>
+									<arch>x86_64</arch>
+								</environment>
+								<environment>
+									<os>macosx</os>
+									<ws>cocoa</ws>
+									<arch>x86_64</arch>
+								</environment>
+							</environments>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 		<profile>
 			<id>2019-12.target</id>

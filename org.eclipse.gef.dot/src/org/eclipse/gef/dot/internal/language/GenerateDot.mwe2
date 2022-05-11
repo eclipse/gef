@@ -142,7 +142,7 @@ Workflow {
 			resourceFactoryFragment = {}
 
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+				fragment = org.eclipse.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
 					// A grammar file with .g will be expected in this package (should be stored in src folder)
 					lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotLexer"
 					runtime = true
@@ -166,14 +166,14 @@ Workflow {
 			contentAssist = {}
 
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+				fragment = org.eclipse.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
 					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.contentassist.antlr.lexer.CustomContentAssistInternalDotLexer"
 					contentAssist = true
 				}
 			}
 
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+				fragment = org.eclipse.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
 					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.highlighting.antlr.lexer.CustomHighlightingInternalDotLexer"
 					highlighting = true
 				}
@@ -280,7 +280,7 @@ Workflow {
 
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the runtime module to use the Lexer
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+				fragment = org.eclipse.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
 					// A grammar file with .g will be expected in this package (should be stored in src folder)
 					lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotColorLexer"
 					runtime = true
@@ -290,14 +290,14 @@ Workflow {
 			contentAssist = {}
 
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+				fragment = org.eclipse.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
 					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.contentassist.antlr.lexer.CustomContentAssistInternalDotColorLexer"
 					contentAssist = true
 				}
 			}
 
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+				fragment = org.eclipse.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
 					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.highlighting.antlr.lexer.CustomHighlightingInternalDotColorLexer"
 					highlighting = true
 				}
@@ -354,7 +354,7 @@ Workflow {
 
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the runtime module to use the Lexer
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+				fragment = org.eclipse.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
 					// A grammar file with .g will be expected in this package (should be stored in src folder)
 					lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotColorListLexer"
 					runtime = true
@@ -367,7 +367,7 @@ Workflow {
 			}
 
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+				fragment = org.eclipse.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
 					// A grammar file with .g will be expected in this package (should be stored in src folder)
 					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.contentassist.antlr.lexer.CustomContentAssistInternalDotColorListLexer"
 					contentAssist = true
@@ -376,7 +376,7 @@ Workflow {
 
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the ui module to use the Lexer
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+				fragment = org.eclipse.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
 					// A grammar file with .g will be expected in this package (should be stored in src folder)
 					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.highlighting.antlr.lexer.CustomHighlightingInternalDotColorListLexer"
 					highlighting = true
@@ -543,7 +543,7 @@ Workflow {
 			}
 
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+				fragment = org.eclipse.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
 					lexerGrammar = "org.eclipse.gef.dot.internal.language.parser.antlr.lexer.CustomInternalDotHtmlLabelLexer"
 					runtime = true
 				}
@@ -553,7 +553,7 @@ Workflow {
 
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the ui module to use the Lexer
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+				fragment = org.eclipse.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
 					// A grammar file with .g will be expected in this package (should be stored in src folder)
 					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.contentassist.antlr.lexer.CustomContentAssistInternalDotHtmlLabelLexer"
 					contentAssist = true
@@ -562,7 +562,7 @@ Workflow {
 
 			// Uses ANTLR Tools to compile a custom lexer and will also add a binding in the ui module to use the Lexer
 			fragment = org.eclipse.xtext.generator.adapter.FragmentAdapter {
-				fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+				fragment = org.eclipse.xtext.generator.parser.antlr.ex.ExternalAntlrLexerFragment {
 					// A grammar file with .g will be expected in this package (should be stored in src folder)
 					lexerGrammar = "org.eclipse.gef.dot.internal.ide.language.highlighting.antlr.lexer.CustomHighlightingInternalDotHtmlLabelLexer"
 					highlighting = true

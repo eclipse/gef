@@ -35,6 +35,7 @@ import com.google.inject.MembersInjector;
 import com.google.inject.multibindings.MapBinderBinding;
 import com.google.inject.multibindings.MultibinderBinding;
 import com.google.inject.multibindings.MultibindingsTargetVisitor;
+import com.google.inject.multibindings.OptionalBinderBinding;
 import com.google.inject.spi.BindingTargetVisitor;
 import com.google.inject.spi.ConstructorBinding;
 import com.google.inject.spi.ConvertedConstantBinding;
@@ -76,7 +77,11 @@ import javafx.beans.value.ObservableValue;
  *
  * @see AdapterMap
  * @see AdaptableTypeListener
- * @author anyssen
+ * 
+ * Contributors:
+ *    Alexander Nyssen (itemis AG) - initial API and implementation
+ *    Markus Mühlbrandt (itemis AG) - compatibility with later Google Guice version (https://github.com/eclipse/gef/issues/102)
+ *     
  */
 public class AdapterInjector implements MembersInjector<IAdaptable> {
 
@@ -179,6 +184,12 @@ public class AdapterInjector implements MembersInjector<IAdaptable> {
 		@Override
 		public MapBinderBinding<?> visit(
 				MultibinderBinding<? extends Object> multibinding) {
+			return null;
+		}
+
+		@Override
+		public MapBinderBinding<?> visit(
+				OptionalBinderBinding<? extends Object> optionalbinding) {
 			return null;
 		}
 
