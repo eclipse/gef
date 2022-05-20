@@ -21,7 +21,6 @@ import org.eclipse.xtext.testing.util.ParseHelper
 import org.eclipse.xtext.testing.validation.ValidationTestHelper
 import org.eclipse.xtext.ui.testing.AbstractQuickfixTest
 import org.junit.Test
-import org.junit.Ignore
 import org.junit.runner.RunWith
 
 import static org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelValidator.HTML_ATTRIBUTE_INVALID_ATTRIBUTE_NAME
@@ -29,7 +28,6 @@ import static org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelValid
 
 @RunWith(XtextRunner)
 @InjectWith(DotHtmlLabelUiInjectorProvider)
-@Ignore("Refactor: Adapt to XText 2.22 API changes")
 class DotHtmlLabelQuickfixTest extends AbstractQuickfixTest {
 
 	@Inject extension ParseHelper<HtmlLabel>
@@ -51,17 +49,16 @@ class DotHtmlLabelQuickfixTest extends AbstractQuickfixTest {
 	}
 
 	override testQuickfixesOn(CharSequence it, String issueCode, Quickfix... expected) {
-		//TODO: Adapt to XText 2.22 API changes
-//		val issue = getValidationIssue(issueCode)
-//		val actualIssueResolutions = issue.resolutions
-//		assertEquals("The number of quickfixes does not match!", expected.size, actualIssueResolutions.size)
-//		for (i : 0..< actualIssueResolutions.size) {
-//			val actualIssueResolution = actualIssueResolutions.get(i)
-//			val expectedIssueResolution = expected.get(i)
-//			expectedIssueResolution.label.assertEquals(actualIssueResolution.label)
-//			expectedIssueResolution.description.assertEquals(actualIssueResolution.getDescription)
-//			expectedIssueResolution.result.assertIssueResolutionResult(actualIssueResolution, toString)
-//		}
+		val issue = getValidationIssue(issueCode)
+		val actualIssueResolutions = issueResolutionProvider.getResolutions(issue);
+		assertEquals("The number of quickfixes does not match!", expected.size, actualIssueResolutions.size)
+		for (i : 0..< actualIssueResolutions.size) {
+			val actualIssueResolution = actualIssueResolutions.get(i)
+			val expectedIssueResolution = expected.get(i)
+			expectedIssueResolution.label.assertEquals(actualIssueResolution.label)
+			expectedIssueResolution.description.assertEquals(actualIssueResolution.getDescription)
+			expectedIssueResolution.result.assertIssueResolutionResult(actualIssueResolution, toString)
+		}
 	}
 
 	private def getValidationIssue(CharSequence it, String issueCode) {

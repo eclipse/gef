@@ -26,11 +26,9 @@ import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.ui.testing.AbstractHighlightingTest
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.Ignore
 
 @RunWith(XtextRunner)
 @InjectWith(DotUiInjectorProvider)
-@Ignore("Refactor: Adapt to XText 2.22 API changes")
 class DotHighlightingTest extends AbstractHighlightingTest {
 
 	// lexical highlighting test cases
@@ -152,12 +150,12 @@ class DotHighlightingTest extends AbstractHighlightingTest {
 
 	private def testHighlighting(CharSequence it, String text, int fontStyle, int red, int green, int blue, boolean strikeout) {
 	//TODO: Adapt to XText 2.22 API changes	
-//		// given
-//		dslFile
-//		// when
-//		.openInEditor
-//		// then
-//		.testHighlighting(text, fontStyle, red, green, blue, strikeout)
+		// given
+		dslFile(projectName, fileName, fileExtension, it)
+		// when
+		.openInEditor
+		// then
+		.testHighlighting(text, fontStyle, red, green, blue, strikeout)
 	}
 
 	private def testHighlighting(StyledText styledText, String text, int fontStyle,
