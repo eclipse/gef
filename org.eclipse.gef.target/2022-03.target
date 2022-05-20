@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde?>
 <!-- generated with https://github.com/eclipse-cbi/targetplatform-dsl -->
-<target name="2022-03" sequenceNumber="1651142051">
+<target name="2022-03" sequenceNumber="1652342438">
   <locations>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="3.7.0.202010120720"/>
@@ -13,11 +13,11 @@
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="de.itemis.xtext.antlr.feature.feature.group" version="2.1.1.v201405091103"/>
-      <repository location="http://download.itemis.com/updates/releases/2.1.1"/>
+      <repository location="https://download.itemis.com/updates/releases/2.1.1"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.eclipse.license.feature.group" version="2.0.2.v20181016-2210"/>
-      <repository location="http://download.eclipse.org/cbi/updates/license"/>
+      <repository location="https://download.eclipse.org/cbi/updates/license"/>
     </location>
     <location includeMode="planner" includeAllPlatforms="false" includeSource="true" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.objectweb.asm" version="9.2.0.v20210813-1119"/>

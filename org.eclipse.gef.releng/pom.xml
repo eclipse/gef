@@ -39,7 +39,8 @@
 		<tycho.scmUrl>scm:git:https://github.com/eclipse/gef.git</tycho.scmUrl>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<javafx.modules.dir>${env.JAVAFX_HOME}/lib</javafx.modules.dir> 
+		<!--<javafx.modules.dir>${env.JAVAFX_HOME}/lib</javafx.modules.dir>-->
+		<javafx.modules.dir>C:/Software/Java/javafx-sdk-11.0.2/lib</javafx.modules.dir> 
 		<javafx.version>${java.vm.specification.version}</javafx.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 	    <maven.compiler.target>1.8</maven.compiler.target>
