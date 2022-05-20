@@ -10,10 +10,8 @@
     Contributors:
         Alexander Nyßen (itemis AG) - initial API and implementation
  -->
-
 <site>
    <bundle id="com.google.inject" version="0.0.0"/>
-   <bundle id="com.google.inject.multibindings" version="0.0.0"/>
    <bundle id="javax.inject" version="0.0.0"/>
    <bundle id="javax.xml" version="0.0.0"/>
    <bundle id="org.eclipse.osgi" version="0.0.0"/>
