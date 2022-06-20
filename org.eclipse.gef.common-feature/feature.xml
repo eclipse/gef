@@ -13,7 +13,7 @@
 <feature
       id="org.eclipse.gef.common"
       label="GEF Common"
-      version="5.0.1.qualifier"
+      version="5.0.2.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.common"
       license-feature="org.eclipse.license"

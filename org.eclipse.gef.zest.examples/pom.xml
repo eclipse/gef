@@ -22,7 +22,7 @@
 	</parent>
 	<groupId>org.eclipse.gef.examples</groupId>
 	<artifactId>org.eclipse.gef.zest.examples</artifactId>
-	<version>5.1.2-SNAPSHOT</version>
+	<version>5.1.3-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 	<build>
 		<plugins>
