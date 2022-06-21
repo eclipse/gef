@@ -33,8 +33,7 @@
 
    <requires>
       <import plugin="com.google.guava" version="12.0.0" match="greaterOrEqual"/>
-      <import plugin="com.google.inject" version="3.0.0" match="compatible"/>
-      <import plugin="com.google.inject.multibindings" version="3.0.0" match="compatible"/>
+      <import plugin="com.google.inject" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.common" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.geometry" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.geometry.convert.fx" version="5.0.0" match="compatible"/>

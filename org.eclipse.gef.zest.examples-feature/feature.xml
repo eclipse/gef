@@ -44,7 +44,7 @@
       <import feature="org.eclipse.gef.zest.fx" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.zest.fx.ui" version="5.0.0" match="compatible"/>
       <import plugin="com.google.guava" version="12.0.0" match="greaterOrEqual"/>
-      <import plugin="com.google.inject" version="3.0.0" match="compatible"/>
+      <import plugin="com.google.inject" version="5.0.0" match="compatible"/>
    </requires>
 
    <plugin

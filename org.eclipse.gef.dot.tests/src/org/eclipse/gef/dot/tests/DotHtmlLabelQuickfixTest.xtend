@@ -50,7 +50,7 @@ class DotHtmlLabelQuickfixTest extends AbstractQuickfixTest {
 
 	override testQuickfixesOn(CharSequence it, String issueCode, Quickfix... expected) {
 		val issue = getValidationIssue(issueCode)
-		val actualIssueResolutions = issue.resolutions
+		val actualIssueResolutions = issueResolutionProvider.getResolutions(issue);
 		assertEquals("The number of quickfixes does not match!", expected.size, actualIssueResolutions.size)
 		for (i : 0..< actualIssueResolutions.size) {
 			val actualIssueResolution = actualIssueResolutions.get(i)

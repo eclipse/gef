@@ -8,15 +8,15 @@ location "https://download.eclipse.org/releases/2019-09" {
 	org.eclipse.emf.sdk.feature.group
 }
 
-location "http://download.itemis.com/updates/releases/2.1.1" {
+location "https://download.itemis.com/updates/releases/2.1.1" {
 	de.itemis.xtext.antlr.feature.feature.group
 }
 
-location "http://download.eclipse.org/cbi/updates/license" {
+location "https://download.eclipse.org/cbi/updates/license" {
 	org.eclipse.license.feature.group [2.0.2.v20181016-2210,2.1.0)
 }
 
-location "http://download.eclipse.org/tools/orbit/downloads/drops/R20190602212107/repository/" {
+location "https://download.eclipse.org/tools/orbit/downloads/drops/R20190602212107/repository/" {
 	org.objectweb.asm
 	
 	com.google.inject.assistedinject

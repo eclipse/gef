@@ -149,8 +149,9 @@ class DotHighlightingTest extends AbstractHighlightingTest {
 	}
 
 	private def testHighlighting(CharSequence it, String text, int fontStyle, int red, int green, int blue, boolean strikeout) {
+	//TODO: Adapt to XText 2.22 API changes	
 		// given
-		dslFile
+		dslFile(projectName, fileName, fileExtension, it)
 		// when
 		.openInEditor
 		// then
