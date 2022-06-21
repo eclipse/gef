@@ -29,7 +29,7 @@
 		<pluginRepository>
 			<id>jboss-public-repository-group</id>
 			<name>JBoss Public Repository Group</name>
-			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
+			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
 		</pluginRepository>
 		<pluginRepository>
 			<id>jboss-snapshots-repository</id>
@@ -39,7 +39,7 @@
 	</pluginRepositories>
 	<profiles>
 		<profile>
-			<id>OXYGEN.target</id>
+			<id>2022-03.target</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -49,7 +49,41 @@
 						<!-- https://github.com/jbosstools/jbosstools-maven-plugins/wiki -->
 						<groupId>org.jboss.tools.tycho-plugins</groupId>
 						<artifactId>repository-utils</artifactId>
-						<version>0.19.0-SNAPSHOT</version>
+						<version>2.5.0</version>
+						<executions>
+							<execution>
+								<id>generate-facade</id>
+								<phase>package</phase>
+								<goals>
+									<goal>generate-repository-facade</goal>
+								</goals>
+								<configuration>
+									<associateSites>
+										<site>http://download.eclipse.org/releases/2022-03</site>
+									</associateSites>
+								</configuration>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>org.eclipse.tycho</groupId>
+								<artifactId>tycho-packaging-plugin</artifactId>
+								<version>${tycho.version}</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>OXYGEN.target</id>
+			<build>
+				<plugins>
+					<plugin>
+						<!-- https://github.com/jbosstools/jbosstools-maven-plugins/wiki -->
+						<groupId>org.jboss.tools.tycho-plugins</groupId>
+						<artifactId>repository-utils</artifactId>
+						<version>2.5.0</version>
 						<executions>
 							<execution>
 								<id>generate-facade</id>
@@ -83,7 +117,7 @@
 						<!-- https://github.com/jbosstools/jbosstools-maven-plugins/wiki -->
 						<groupId>org.jboss.tools.tycho-plugins</groupId>
 						<artifactId>repository-utils</artifactId>
-						<version>0.19.0-SNAPSHOT</version>
+						<version>2.5.0</version>
 						<executions>
 							<execution>
 								<id>generate-facade</id>
@@ -117,7 +151,7 @@
 						<!-- https://github.com/jbosstools/jbosstools-maven-plugins/wiki -->
 						<groupId>org.jboss.tools.tycho-plugins</groupId>
 						<artifactId>repository-utils</artifactId>
-						<version>0.19.0-SNAPSHOT</version>
+						<version>2.5.0</version>
 						<executions>
 							<execution>
 								<id>generate-facade</id>
@@ -151,7 +185,7 @@
 						<!-- https://github.com/jbosstools/jbosstools-maven-plugins/wiki -->
 						<groupId>org.jboss.tools.tycho-plugins</groupId>
 						<artifactId>repository-utils</artifactId>
-						<version>0.19.0-SNAPSHOT</version>
+						<version>2.5.0</version>
 						<executions>
 							<execution>
 								<id>generate-facade</id>

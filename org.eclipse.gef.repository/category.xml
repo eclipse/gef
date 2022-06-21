@@ -135,7 +135,6 @@
    <bundle id="com.google.guava"/>
    <bundle id="com.google.inject"/>
    <bundle id="com.google.inject.assistedinject"/>
-   <bundle id="com.google.inject.multibindings"/>
    <category-def name="GEF Geometry" label="GEF Geometry"/>
    <category-def name="GEF FX" label="GEF FX"/>
    <category-def name="GEF Zest" label="GEF Zest"/>
