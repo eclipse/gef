@@ -7,7 +7,7 @@ pipeline {
   // TODO: Create better notifications
 
   agent {
-    label "migration"
+    label "centos-8"
   }
 
   options {
