@@ -8,20 +8,20 @@ If you want to contribute fixes to our code base, you will need to set up a prop
 
 ### Install JDK 11 / OpenJFX 11
 
-The current [5.4 (2020-03)](https://projects.eclipse.org/projects/tools.gef/releases/5.4.0-2020-03) development stream uses a minimal BREE (bundle required execution enviroment) of JavaSE-1.8 for all bundles. However, GEF aims to be compatible to Java 11, so if you want to contribute, you will thus have to install a current Java SE Development Kit 11. In addition, you will need a matching version of JavaFX.
+The current [5.4 (2022-06)](https://projects.eclipse.org/projects/tools.gef/releases/5.4.0-2022-06) development stream uses a minimal BREE (bundle required execution enviroment) of JavaSE-1.8 for all bundles. However, GEF aims to be compatible to Java 11, so if you want to contribute, you will thus have to install a current Java SE Development Kit 11. In addition, you will need a matching version of JavaFX.
 
 * [OpenJDK](https://jdk.java.net/archive/)
 * [OpenJFX](https://gluonhq.com/products/javafx/)
 
 ### Prepare an Eclipse IDE
 
-We recommend to download a recent '[Eclipse IDE for Eclipse Committers (2019-03)](https://www.eclipse.org/downloads/packages)' package and to prepare it as outlined below.
+We recommend to download a recent '[Eclipse IDE for Eclipse Committers (2022-03)](https://www.eclipse.org/downloads/packages/release/2022-03/r)' package and to prepare it as outlined below.
 
 1) Install `PDE API Tools Execution Environment Descriptors`
 
-1) Install `e(fx)clipse - IDE - PDE` from <https://download.eclipse.org/efxclipse/updates-released/3.6.0/site/>
+1) Install `e(fx)clipse - IDE - PDE` from <https://download.eclipse.org/efxclipse/updates-released/3.8.0/site/>
 
-1) Install `Xtext Complete SDK` in version 2.17
+1) Install `Xtext Complete SDK` in version 2.26
 
 1) Install `m2e - Maven Integration for Eclipse (includes Incubating components)`
 
@@ -35,7 +35,7 @@ All production code bundles (i.e. excluding doc and test bundles) are configured
 
 In order to properly resolve all JavaFX dependencies, the JavaFX-PDE-integration (`org.eclipse.fx.ide.pde.feature`) provided by the [e(fx)clipse](https://www.eclipse.org/efxclipse/index.html) project is required. As certain parts of JavaFX (e.g. the SWT integration) are not included in the JRE definition, the respective classes will not be available as a JRE System Library to the GEF bundles. The e(fx)clipse JavaFX-PDE-integration will automatically add additional classpath entries to the bundles, so all these dependencies can also be resolved.
 
-Install `e(fx)clipse - IDE - PDE` (`org.eclipse.fx.ide.pde.feature.feature.group`) in a version matching your IDE. For 2019-03, it can be installed in version 3.5.0 from <https://download.eclipse.org/efxclipse/updates-released/3.6.0/site/>.
+Install `e(fx)clipse - IDE - PDE` (`org.eclipse.fx.ide.pde.feature.feature.group`) in a version matching your IDE. For 2022-03, it can be installed in version 3.8.0 from <https://download.eclipse.org/efxclipse/updates-released/3.8.0/site/>.
 
 To ensure that the e(fx)clipse JavaFX-PDE integration can properly locate those JavaFX libraries that are not included in the JRE definition, the Java execution environment for JavaSE-1.8 has to be resolved against a matching Java 11 JDK. To ensure that this is the case:
 
@@ -74,7 +74,7 @@ Having set up the Eclipse IDE, next is to [fork the repository](https://help.git
 
 ### Set Target Platform
 
-Multiple target definition files are provided by the `org.eclipse.gef.target` project. To specify the target platform, simply open the respective target definition (e.g. *2019-03.target*) within the *Target Editor*, let it fully resolve (i.e. wait until the *Resolving Target Definition* background task has finished and the installable units are listed under the respective *Locations*), then choose to *Set as Target Platform*).
+Multiple target definition files are provided by the `org.eclipse.gef.target` project. To specify the target platform, simply open the respective target definition (e.g. *2022-03.target*) within the *Target Editor*, let it fully resolve (i.e. wait until the *Resolving Target Definition* background task has finished and the installable units are listed under the respective *Locations*), then choose to *Set as Target Platform*).
 
 In case the target editor does not properly resolve the target definition, an invalid target cache may be the cause. In such cases, opening the target definition file with a text editor and incrementing the sequence number manually, will invalidate the cache when reopening it with the target editor again. After the cache has been invalidated, the sequence number can be restored.
 
@@ -100,7 +100,7 @@ Having properly set up your development environment you can start working on the
 
 GEF uses a Maven/Tycho-based build infrastructure. With the [Eclipse Maven Integration](http://eclipse.org/m2e/), a headless build can also be executed in the local workspace. Make sure you have checked out all projects of the respective git repository. Then easily run the build by right-clicking the `pom.xml` file located within the `org.eclipse.gef.releng` project, and selecting 'Run As -> Maven build...'.
 
-In the configuration wizard you have to specify the goals ("clean verify") and the target profile (e.g. "2019-03.target") for the build. Note that without setting the target profile the build will not run successfully. The build needs to be executed with a Java 11 VM, so if you have installed multiple JVMs, you should check the settings in the *JRE* tab.
+In the configuration wizard you have to specify the goals ("clean verify") and the target profile (e.g. "2022-03.target") for the build. Note that without setting the target profile the build will not run successfully. The build needs to be executed with a Java 11 VM, so if you have installed multiple JVMs, you should check the settings in the *JRE* tab.
 
 As a result of the build, an update-site will be created in the `target` sub-folder of the `org.eclipse.gef.repository` project.
 
