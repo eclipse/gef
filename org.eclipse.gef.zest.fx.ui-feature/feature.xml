@@ -13,7 +13,7 @@
 <feature
       id="org.eclipse.gef.zest.fx.ui"
       label="GEF Zest.FX.UI"
-      version="5.0.3.qualifier"
+      version="5.0.4.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.zest.fx.ui"
       license-feature="org.eclipse.license"
