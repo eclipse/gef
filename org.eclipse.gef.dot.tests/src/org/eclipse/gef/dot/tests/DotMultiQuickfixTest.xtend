@@ -52,13 +52,13 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 			graph {
 				1<0<->>0>2
 			}
-			--------------
+			-----
 			0: message=EdgeOp '->' may only be used in directed graphs.
 		''', '''
 			graph {
 				1--2
 			}
-			--------
+			-----
 			(no markers found)
 		''')
 	}
@@ -72,13 +72,13 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 			graph {
 				1<0<->>0>2--3
 			}
-			-----------------
+			-----
 			0: message=EdgeOp '->' may only be used in directed graphs.
 		''', '''
 			graph {
 				1--2--3
 			}
-			-----------
+			-----
 			(no markers found)
 		''')
 	}
@@ -92,13 +92,13 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 			graph {
 				1--2<0<->>0>3
 			}
-			-----------------
+			-----
 			0: message=EdgeOp '->' may only be used in directed graphs.
 		''', '''
 			graph {
 				1--2--3
 			}
-			-----------
+			-----
 			(no markers found)
 		''')
 	}
@@ -116,7 +116,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 					2 3
 				}
 			}
-			-------------------------
+			-----
 			0: message=EdgeOp '->' may only be used in directed graphs.
 		''', '''
 			graph {
@@ -124,7 +124,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 					2 3
 				}
 			}
-			-------------------
+			-----
 			(no markers found)
 		''')
 	}
@@ -142,7 +142,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 					2 3
 				} -- subgraph { 4 }
 			}
-			-------------------------
+			-----
 			0: message=EdgeOp '->' may only be used in directed graphs.
 		''', '''
 			graph {
@@ -150,7 +150,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 					2 3
 				} -- subgraph { 4 }
 			}
-			-----------------------
+			-----
 			(no markers found)
 		''')
 	}
@@ -168,7 +168,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 					2 3
 				} <0<->>0> subgraph { 4 }
 			}
-			-----------------------------
+			-----
 			0: message=EdgeOp '->' may only be used in directed graphs.
 		''', '''
 			graph {
@@ -176,7 +176,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 					2 3
 				} -- subgraph { 4 }
 			}
-			-----------------------
+			-----
 			(no markers found)
 		''')
 	}
@@ -190,13 +190,13 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 			digraph {
 				1<0<-->0>2
 			}
-			--------------
+			-----
 			0: message=EdgeOp '--' may only be used in undirected graphs.
 		''', '''
 			digraph {
 				1->2
 			}
-			---------
+			-----
 			(no markers found)
 		''')
 	}
@@ -210,13 +210,13 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 			digraph {
 				1<0<-->0>2->3
 			}
-			-----------------
+			-----
 			0: message=EdgeOp '--' may only be used in undirected graphs.
 		''', '''
 			digraph {
 				1->2->3
 			}
-			-----------
+			-----
 			(no markers found)
 		''')
 	}
@@ -230,13 +230,13 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 			digraph {
 				1->2<0<-->0>3
 			}
-			-----------------
+			-----
 			0: message=EdgeOp '--' may only be used in undirected graphs.
 		''', '''
 			digraph {
 				1->2->3
 			}
-			-----------
+			-----
 			(no markers found)
 		''')
 	}
@@ -254,7 +254,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 					2 3
 				}
 			}
-			-------------------------
+			-----
 			0: message=EdgeOp '--' may only be used in undirected graphs.
 		''', '''
 			digraph {
@@ -262,7 +262,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 					2 3
 				}
 			}
-			-------------------
+			-----
 			(no markers found)
 		''')
 	}
@@ -280,7 +280,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 					2 3
 				} -> subgraph { 4 }
 			}
-			-------------------------
+			-----
 			0: message=EdgeOp '--' may only be used in undirected graphs.
 		''', '''
 			digraph {
@@ -288,7 +288,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 					2 3
 				} -> subgraph { 4 }
 			}
-			-----------------------
+			-----
 			(no markers found)
 		''')
 	}
@@ -306,7 +306,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 					2 3
 				} <0<-->0> subgraph { 4 }
 			}
-			-----------------------------
+			-----
 			0: message=EdgeOp '--' may only be used in undirected graphs.
 		''', '''
 			digraph {
@@ -314,7 +314,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 					2 3
 				} -> subgraph { 4 }
 			}
-			-----------------------
+			-----
 			(no markers found)
 		''')
 	}
@@ -330,7 +330,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 				1<0<->>0>2
 				2<1<->>1>3
 			}
-			--------------
+			-----
 			0: message=EdgeOp '->' may only be used in directed graphs.
 			1: message=EdgeOp '->' may only be used in directed graphs.
 		''', [firstMarker], '''
@@ -338,7 +338,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 				1--2
 				2<0<->>0>3
 			}
-			--------------
+			-----
 			0: message=EdgeOp '->' may only be used in directed graphs.
 		''')
 	}
@@ -352,14 +352,14 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 			graph {
 				1<0<->>0>2<1<->>1>3
 			}
-			-----------------------
+			-----
 			0: message=EdgeOp '->' may only be used in directed graphs.
 			1: message=EdgeOp '->' may only be used in directed graphs.
 		''', [firstMarker], '''
 			graph {
 				1--2<0<->>0>3
 			}
-			-----------------
+			-----
 			0: message=EdgeOp '->' may only be used in directed graphs.
 		''')
 	}
@@ -375,7 +375,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 				1<0<-->0>2
 				2<1<-->1>3
 			}
-			--------------
+			-----
 			0: message=EdgeOp '--' may only be used in undirected graphs.
 			1: message=EdgeOp '--' may only be used in undirected graphs.
 		''', [firstMarker], '''
@@ -383,7 +383,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 				1->2
 				2<0<-->0>3
 			}
-			--------------
+			-----
 			0: message=EdgeOp '--' may only be used in undirected graphs.
 		''')
 	}
@@ -397,14 +397,14 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 			digraph {
 				1<0<-->0>2<1<-->1>3
 			}
-			-----------------------
+			-----
 			0: message=EdgeOp '--' may only be used in undirected graphs.
 			1: message=EdgeOp '--' may only be used in undirected graphs.
 		''', [firstMarker], '''
 			digraph {
 				1->2<0<-->0>3
 			}
-			-----------------
+			-----
 			0: message=EdgeOp '--' may only be used in undirected graphs.
 		''')
 	}
@@ -420,7 +420,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 				1<0<->>0>2
 				2<1<->>1>3
 			}
-			--------------
+			-----
 			0: message=EdgeOp '->' may only be used in directed graphs.
 			1: message=EdgeOp '->' may only be used in directed graphs.
 		''', '''
@@ -428,7 +428,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 				1--2
 				2--3
 			}
-			--------
+			-----
 			(no markers found)
 		''')
 	}
@@ -442,14 +442,14 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 			graph {
 				1<0<->>0>2<1<->>1>3
 			}
-			-----------------------
+			-----
 			0: message=EdgeOp '->' may only be used in directed graphs.
 			1: message=EdgeOp '->' may only be used in directed graphs.
 		''', '''
 			graph {
 				1--2--3
 			}
-			-----------
+			-----
 			(no markers found)
 		''')
 	}
@@ -465,7 +465,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 				1<0<-->0>2
 				2<1<-->1>3
 			}
-			--------------
+			-----
 			0: message=EdgeOp '--' may only be used in undirected graphs.
 			1: message=EdgeOp '--' may only be used in undirected graphs.
 		''', '''
@@ -473,7 +473,7 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 				1->2
 				2->3
 			}
-			---------
+			-----
 			(no markers found)
 		''')
 	}
@@ -487,14 +487,14 @@ class DotMultiQuickfixTest extends AbstractEditorTest {
 			digraph {
 				1<0<-->0>2<1<-->1>3
 			}
-			-----------------------
+			-----
 			0: message=EdgeOp '--' may only be used in undirected graphs.
 			1: message=EdgeOp '--' may only be used in undirected graphs.
 		''', '''
 			digraph {
 				1->2->3
 			}
-			-----------
+			-----
 			(no markers found)
 		''')
 	}
