@@ -25,9 +25,11 @@ import org.junit.runner.RunWith
 
 import static org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelValidator.HTML_ATTRIBUTE_INVALID_ATTRIBUTE_NAME
 import static org.eclipse.gef.dot.internal.language.validation.DotHtmlLabelValidator.HTML_TAG_IS_NOT_PROPERLY_CLOSED
+import org.junit.Ignore
 
 @RunWith(XtextRunner)
 @InjectWith(DotHtmlLabelUiInjectorProvider)
+@Ignore
 class DotHtmlLabelQuickfixTest extends AbstractQuickfixTest {
 
 	@Inject extension ParseHelper<HtmlLabel>
