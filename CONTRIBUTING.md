@@ -104,9 +104,34 @@ In the configuration wizard you have to specify the goals ("clean verify") and t
 
 As a result of the build, an update-site will be created in the `target` sub-folder of the `org.eclipse.gef.repository` project.
 
+## Eclipse Development Process
+
+This Eclipse Foundation open project is governed by the Eclipse Foundation
+Development Process and operates under the terms of the Eclipse IP Policy.
+
+* https://eclipse.org/projects/dev_process
+* https://www.eclipse.org/org/documents/Eclipse_IP_Policy.pdf
+
+## Eclipse Contributor Agreement
+
+In order to be able to contribute to Eclipse Foundation projects you must
+electronically sign the Eclipse Contributor Agreement (ECA).
+
+* http://www.eclipse.org/legal/ECA.php
+
+The ECA provides the Eclipse Foundation with a permanent record that you agree
+that each of your contributions will comply with the commitments documented in
+the Developer Certificate of Origin (DCO). Having an ECA on file associated with
+the email address matching the "Author" field of your contribution's Git commits
+fulfills the DCO's requirement that you sign-off on your contributions.
+
+For more information, please see the Eclipse Committer Handbook:
+https://www.eclipse.org/projects/handbook/#resources-commit
+
+
 ## Deliver a Contribution
 
-Before any contribution can be accepted by the project, you need to electronically sign the [Eclipse Foundation Contributor License Agreement (CLA)](https://www.eclipse.org/legal/CLA.php). Further, your changes should be comprised to a single commit (squash if necessary) and the commit needs to be properly [signed off](https://wiki.eclipse.org/Development_Resources/Contributing_via_Git#Signing_off_on_a_commit) to mark its CLA-compliance.
+Your changes should be comprised to a single commit (squash if necessary) and the commit needs to be properly [signed off](https://wiki.eclipse.org/Development_Resources/Contributing_via_Git#Signing_off_on_a_commit) to mark its CLA-compliance.
 
 The commit message should follow the following structure:
 
@@ -130,3 +155,9 @@ Example:
     Bug: https://bugs.eclipse.org/bugs/show_bug.cgi?id=493136
 
 If your contribution does not exceed the contribution limit (currently 1000 LOC) this will allow us to directly accept your pull request. If your contribution was not developed from scratch or contains content from other authors, please indicate this on the related Bugzilla entry. As in cases where the contribution exceeds the limit, we will have to open a contribution questionnaire (and may have to ask for additional information via the related Bugzilla) to handle such cases in compliance to the [Eclipse Legal Process](https://eclipse.org/legal/EclipseLegalProcessPoster.pdf).
+
+
+
+
+
+
