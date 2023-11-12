@@ -12,7 +12,6 @@
  -->
 <site>
    <bundle id="com.google.inject" version="0.0.0"/>
-   <bundle id="javax.inject" version="0.0.0"/>
    <bundle id="javax.xml" version="0.0.0"/>
    <bundle id="org.eclipse.osgi" version="0.0.0"/>
    <bundle id="org.eclipse.equinox.common" version="0.0.0"/>
