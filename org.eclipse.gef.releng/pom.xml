@@ -25,12 +25,12 @@
 		<maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
 		<maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
 		<maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
-		<tycho.version>2.7.3</tycho.version>
+		<tycho.version>4.0.4</tycho.version>
 		<cbi-plugins.version>1.3.2</cbi-plugins.version>
-		<exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
-		<xtext.version>2.26.0</xtext.version>
+		<exec-maven-plugin.version>3.1.1</exec-maven-plugin.version>
+		<xtext.version>2.32.0</xtext.version>
 		<xtext-antlr-generator-version>2.1.1</xtext-antlr-generator-version>
-		<mwe.version>2.12.2</mwe.version>
+		<mwe.version>2.16.0</mwe.version>
 		<wikidoc.skip>true</wikidoc.skip>
 		<os-jvm-flags></os-jvm-flags>
 		<wikidoc.base.path>../../gef.wiki</wikidoc.base.path>
@@ -62,6 +62,8 @@
 				<artifactId>tycho-compiler-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
+					<useJDK>BREE</useJDK>
+					<compilerArgument>-warn:+discouraged,forbidden</compilerArgument>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<extraClasspathElements>
 						<!-- jfxswt.jar for Java 1.8 -->
@@ -132,7 +134,7 @@
 						<extraClasspathElement>
 							<groupId>com.google.inject.extensions</groupId>
 							<artifactId>guice-assistedinject</artifactId>
-							<version>5.0</version>
+							<version>7.0.0</version>
 						</extraClasspathElement>
 					</extraClasspathElements>
 				</configuration>
@@ -331,20 +333,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!--<plugin>
-				<groupId>org.eclipse.tycho.extras</groupId>
-				<artifactId>tycho-source-feature-plugin</artifactId>
-				<version>${tycho.version}</version>
-				<executions>
-					<execution>
-						<id>source-feature</id>
-						<phase>package</phase>
-						<goals>
-							<goal>source-feature</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>-->
 			<plugin>
 				<!-- This is needed for source feature generation, as outlined in bug 
 					#398250 -->
@@ -360,6 +348,9 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<defaultP2Metadata>false</defaultP2Metadata>
+				</configuration>
 			</plugin>
 		</plugins>
 		<pluginManagement>
@@ -380,7 +371,7 @@
 						<useUIThread>false</useUIThread>
 						<useSystemClassLoader>true</useSystemClassLoader>
 						<testFailureIgnore>${maven.test.failure.ignore}</testFailureIgnore>
-						<argLine>-Xmx512m ${os-jvm-flags} -Dosgi.framework.extensions=org.eclipse.fx.osgi -Defxclipse.java-modules.dir=${javafx.modules.dir}</argLine>
+						<argLine>-Xmx512m ${os-jvm-flags} -Dosgi.framework.extensions=org.eclipse.fx.osgi -Defxclipse.java-modules.dir="${javafx.modules.dir}"</argLine>
 						<frameworkExtensions>
 							<frameworkExtension>
 								<groupId>org.eclipse.fx.shared</groupId>
@@ -413,6 +404,59 @@
 			<properties>
 				<os-jvm-flags>-XstartOnFirstThread</os-jvm-flags>
 			</properties>
+		</profile>
+		<profile>
+			<id>2023-12.target</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>target-platform-configuration</artifactId>
+						<version>${tycho.version}</version>
+						<configuration>
+							<!-- add target file content to target platform -->
+							<target>
+								<artifact>
+									<groupId>org.eclipse.gef</groupId>
+									<artifactId>org.eclipse.gef.target</artifactId>
+									<version>5.0.1-SNAPSHOT</version>
+									<classifier>2023-12</classifier>
+								</artifact>
+							</target>
+							<dependency-resolution>
+								<optionalDependencies>require</optionalDependencies>
+							</dependency-resolution>
+							<environments>
+								<environment>
+									<os>linux</os>
+									<ws>gtk</ws>
+									<arch>x86_64</arch>
+								</environment>
+								<environment>
+									<os>linux</os>
+									<ws>gtk</ws>
+									<arch>aarch64</arch>
+								</environment>
+								<environment>
+									<os>win32</os>
+									<ws>win32</ws>
+									<arch>x86_64</arch>
+								</environment>
+								<environment>
+									<os>macosx</os>
+									<ws>cocoa</ws>
+									<arch>x86_64</arch>
+								</environment>
+								<environment>
+									<os>macosx</os>
+									<ws>cocoa</ws>
+									<arch>aarch64</arch>
+								</environment>
+							</environments>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 		<profile>
 			<id>2022-03.target</id>
@@ -602,32 +646,9 @@
 			</build>
 		</profile>
 		<profile>
-			<id>hudson.eclipse.org</id>
+			<id>sign</id>
 			<build>
 				<plugins>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-compiler-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<configuration>
-							<useJDK>BREE</useJDK>
-							<compilerArgument>-warn:+discouraged,forbidden</compilerArgument>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.tycho.extras</groupId>
-						<artifactId>tycho-pack200a-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<executions>
-							<execution>
-								<id>pack200-normalize</id>
-								<goals>
-									<goal>normalize</goal>
-								</goals>
-								<phase>verify</phase>
-							</execution>
-						</executions>
-					</plugin>
 					<plugin>
 						<groupId>org.eclipse.cbi.maven.plugins</groupId>
 						<artifactId>eclipse-jarsigner-plugin</artifactId>
@@ -642,47 +663,24 @@
 							</execution>
 						</executions>
 					</plugin>
-					<plugin>
-						<groupId>org.eclipse.tycho.extras</groupId>
-						<artifactId>tycho-pack200b-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<executions>
-							<execution>
-								<id>pack200-pack</id>
-								<goals>
-									<goal>pack</goal>
-								</goals>
-								<phase>verify</phase>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.eclipse.tycho</groupId>
-						<artifactId>tycho-p2-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<executions>
-							<execution>
-								<id>p2-metadata</id>
-								<goals>
-									<goal>p2-metadata</goal>
-								</goals>
-								<phase>verify</phase>
-							</execution>
-						</executions>
-						<configuration>
-							<defaultP2Metadata>false</defaultP2Metadata>
-						</configuration>
-					</plugin>
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>promote</id>
+			<modules>
+				<module>promotion</module>
+			</modules>
+		</profile>
 	</profiles>
+
 	<pluginRepositories>
 		<pluginRepository>
 			<id>CBI</id>
 			<url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
 		</pluginRepository>
 	</pluginRepositories>
+
 	<modules>
 		<module>../org.eclipse.gef.target</module>
 		<module>../org.eclipse.gef.common</module>
@@ -766,6 +764,7 @@
 		<module>../org.eclipse.gef.layout.doc</module>
 		<module>../org.eclipse.gef.layout.doc-feature</module>
 		<module>../org.eclipse.gef.layout.sdk-feature</module>
+		<module>../org.eclipse.gef.sdk-feature</module>
 		<module>../org.eclipse.gef.zest.fx</module>
 		<module>../org.eclipse.gef.zest.fx-feature</module>
 		<module>../org.eclipse.gef.zest.fx.jface</module>

@@ -11,10 +11,10 @@
 -doctitle "GEF Zest API Reference"
 -header "<b>GEF Zest</b><br>@build@"
 -bottom "Copyright (c) 2014 itemis AG and others. All rights reserved."
--link http://docs.oracle.com/javase/8/docs/api/
--link http://docs.oracle.com/javafx/2/api/
+-link https://docs.oracle.com/javase/8/docs/api/
+-link https://docs.oracle.com/javafx/2/api/
 -link https://guava.dev/releases/15.0/api/docs/
--link http://google.github.io/guice/api-docs/3.0/javadoc/
+-link https://google.github.io/guice/api-docs/3.0/javadoc/
 -linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.gef.common.doc/reference/api/ ../org.eclipse.gef.common.doc/reference/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.gef.geometry.doc/reference/api/ ../org.eclipse.gef.geometry.doc/reference/api/

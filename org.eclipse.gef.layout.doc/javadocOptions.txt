@@ -11,7 +11,7 @@
 -doctitle "GEF Layout API Reference"
 -header "<b>GEF Layout</b><br>@build@"
 -bottom "Copyright (c) 2014 itemis AG and others. All rights reserved."
--link http://docs.oracle.com/javase/8/docs/api/
+-link https://docs.oracle.com/javase/8/docs/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.gef.geometry.doc/reference/api/ ../org.eclipse.gef.geometry.doc/reference/api/
 
 org.eclipse.gef.layout

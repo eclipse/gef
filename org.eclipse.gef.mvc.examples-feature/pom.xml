@@ -21,21 +21,21 @@
 		<relativePath>../org.eclipse.gef.releng/pom.xml</relativePath>
 	</parent>
 	<artifactId>org.eclipse.gef.mvc.examples</artifactId>
-	<version>5.2.4-SNAPSHOT</version>
+	<version>5.2.5-SNAPSHOT</version>
 	<packaging>eclipse-feature</packaging>
 	<groupId>org.eclipse.gef.features</groupId>
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.eclipse.tycho.extras</groupId>
-				<artifactId>tycho-source-feature-plugin</artifactId>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-source-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<executions>
 					<execution>
-						<id>source-feature</id>
+						<id>feature-source</id>
 						<phase>package</phase>
 						<goals>
-							<goal>source-feature</goal>
+							<goal>feature-source</goal>
 						</goals>
 					</execution>
 				</executions>

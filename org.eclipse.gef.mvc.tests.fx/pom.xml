@@ -22,7 +22,7 @@
 	</parent>
 	<groupId>org.eclipse.gef.plugins</groupId>
 	<artifactId>org.eclipse.gef.mvc.tests.fx</artifactId>
-	<version>5.2.4-SNAPSHOT</version>
+	<version>5.2.5-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
 	<properties>
 		<!-- XXX: The surefire tests block if called with the -XstartOnFirstThread argument; we thus clear it here -->

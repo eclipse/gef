@@ -36,6 +36,7 @@ import org.junit.runner.RunWith
 
 import static extension org.eclipse.gef.zest.fx.ZestProperties.*
 import static extension org.junit.Assert.*
+import static org.junit.Assume.assumeNoException
 
 /**
  * Test cases for the {@link Dot2ZestAttributesConverter#convertAttributes(Node, Node)} method.
@@ -57,7 +58,7 @@ class Dot2ZestNodeAttributesConversionTest {
 	//public FXNonApplicationThreadRule ctx = new FXNonApplicationThreadRule
 	@BeforeClass
 	def static void setup() {
-		Assume.assumeTrue(!DotTestUtils.runningOnWindows)
+		// Assume.assumeTrue(!DotTestUtils.runningOnWindows)
 	}
 
 	@Rule public val rule = new DotSubgrammarPackagesRegistrationRule
@@ -1003,8 +1004,18 @@ class Dot2ZestNodeAttributesConversionTest {
 	}
 
 	private def assertNodeStyle(CharSequence dotText, String expected) {
-		val actual = dotText.firstNode.convert.shape.style
-		expected.assertEquals(actual.split)
+		try {
+			val actual = dotText.firstNode.convert.shape.style
+			expected.assertEquals(actual.split)
+		} catch (NullPointerException ex) {
+			// TODO JavaFX-Bug
+			// Cannot invoke "com.sun.glass.ui.Timer.resume()" because "this.pulseTimer" is null
+			// 
+			if (!ex.message.contains("com.sun.glass.ui.Timer")) {
+				throw ex;
+			}
+			assumeNoException("Expected framework error", ex);
+		}
 	}
 
 	private def assertNodeTooltip(CharSequence dotText, String expected) {

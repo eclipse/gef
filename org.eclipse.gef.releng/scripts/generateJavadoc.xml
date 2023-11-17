@@ -83,7 +83,7 @@
 			</then>
 			<else>
 				<exec dir="${basedir}" executable="${javadoc}" output="doc.bin.log" failonerror="true">
-					<arg line="@${basedir}/javadocOptions.txt --module-path ${javafx.modules.dir} --add-modules=javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web -J-Xmx1000M -tag noimplement -tag noextend -tag noreference -tag nooverride -tag generated" />
+					<arg line="@${basedir}/javadocOptions.txt -verbose --module-path &quot;${javafx.modules.dir}&quot; --add-modules=javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web -J-Xmx1000M -tag noimplement -tag noextend -tag noreference -tag nooverride -tag generated" />
 				</exec>
 			</else>
 		</if>
