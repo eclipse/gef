@@ -13,7 +13,7 @@
 <feature
       id="org.eclipse.gef.common"
       label="GEF Common"
-      version="5.0.2.qualifier"
+      version="5.0.3.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.common"
       license-feature="org.eclipse.license"
@@ -33,7 +33,7 @@
 
    <requires>
       <import plugin="com.google.guava" version="12.0.0" match="greaterOrEqual"/>
-      <import plugin="com.google.inject" version="5.0.0" match="compatible"/>
+      <import plugin="com.google.inject" version="7.0.0" match="compatible"/>
       <import feature="org.eclipse.fx.runtime.min.feature" version="2.0.0" match="greaterOrEqual"/>
    </requires>
 

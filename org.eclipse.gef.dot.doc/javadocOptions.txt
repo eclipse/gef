@@ -11,7 +11,7 @@
 -doctitle "GEF DOT API Reference"
 -header "<b>GEF DOT</b><br>@build@"
 -bottom "Copyright (c) 2014 itemis AG and others. All rights reserved."
--link http://docs.oracle.com/javase/8/docs/api/
+-link https://docs.oracle.com/javase/8/docs/api/
 -linkoffline PLUGINS_ROOT/org.eclipse.platform.doc.isv/reference/api/ @linkoffline-target@/org.eclipse.platform.doc.isv/reference/api/
 
 org.eclipse.gef.dot.internal

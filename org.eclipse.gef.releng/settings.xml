@@ -1,0 +1,88 @@
+<settings>
+  <mirrors>
+    <mirror>
+      <id>antlr-snapshot-id</id>
+      <name>Name of antlr-snapshot</name>
+      <url>https://antlr.org/antlr-snapshot</url>
+      <mirrorOf>antlr-snapshot</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>ossrh-snapshots-id</id>
+      <name>Name of ossrh-snapshots</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <mirrorOf>ossrh-snapshots</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>repository.jboss.org-id</id>
+      <name>Name of repository.jboss.org</name>
+      <url>https://repository.jboss.org/maven2</url>
+      <mirrorOf>repository.jboss.org</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>snapshots-id</id>
+      <name>Name of snapshots</name>
+      <url>https://snapshots.maven.codehaus.org/maven2</url>
+      <mirrorOf>snapshots</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>maven2-repository.dev.java.net-id</id>
+      <name>Name of maven2-repository.dev.java.net</name>
+      <url>https://download.java.net/maven/2/</url>
+      <mirrorOf>maven2-repository.dev.java.net</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>central-id</id>
+      <name>Name of central</name>
+      <url>https://repo1.maven.org/maven2</url>
+      <mirrorOf>central</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>codehaus-snapshots-id</id>
+      <name>Name of codehaus-snapshots</name>
+      <url>https://snapshots.repository.codehaus.org</url>
+      <mirrorOf>codehaus-snapshots</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>apache-snapshots-id</id>
+      <name>Name of apache-snapshots</name>
+      <url>https://people.apache.org/maven-snapshot-repository</url>
+      <mirrorOf>apache-snapshots</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>ow2-snapshot-id</id>
+      <name>Name of ow2-snapshot</name>
+      <url>https://repository.ow2.org/nexus/content/repositories/snapshots</url>
+      <mirrorOf>ow2-snapshot</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>snapshots.jboss.org-id</id>
+      <name>Name of snapshots.jboss.org</name>
+      <url>https://snapshots.jboss.org/maven2</url>
+      <mirrorOf>snapshots.jboss.org</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>oss.sonatype.org_jboss-snapshots-id</id>
+      <name>Name of oss.sonatype.org/jboss-snapshots</name>
+      <url>https://oss.sonatype.org/content/repositories/jboss-snapshots</url>
+      <mirrorOf>oss.sonatype.org/jboss-snapshots</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>codehaus.snapshots-id</id>
+      <name>Name of codehaus.snapshots</name>
+      <url>https://snapshots.repository.codehaus.org</url>
+      <mirrorOf>codehaus.snapshots</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>apache.snapshots-id</id>
+      <name>Name of apache.snapshots</name>
+      <url>https://cvs.apache.org/maven-snapshot-repository</url>
+      <mirrorOf>apache.snapshots</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>jboss-public-repository-group-id</id>
+      <name>Name of jboss-public-repository-group</name>
+      <url>https://repository.jboss.org/nexus/content/groups/public</url>
+      <mirrorOf>jboss-public-repository-group</mirrorOf>
+    </mirror>
+  </mirrors>
+</settings>

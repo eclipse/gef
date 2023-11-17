@@ -1,139 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.eclipse.gef.common_5.0.2.qualifier.jar" id="org.eclipse.gef.common" version="5.0.2.qualifier">
+   <feature id="org.eclipse.gef.common" version="0.0.0">
       <category name="GEF Common"/>
    </feature>
-   <feature url="features/org.eclipse.gef.common.doc_5.0.1.qualifier.jar" id="org.eclipse.gef.common.doc" version="5.0.1.qualifier">
+   <feature id="org.eclipse.gef.common.doc" version="0.0.0">
       <category name="GEF Common"/>
    </feature>
-   <feature url="features/org.eclipse.gef.common.sdk_5.0.1.qualifier.jar" id="org.eclipse.gef.common.sdk" version="5.0.1.qualifier">
+   <feature id="org.eclipse.gef.common.sdk" version="0.0.0">
       <category name="GEF Common"/>
    </feature>
-   <feature url="features/org.eclipse.gef.geometry_5.0.1.qualifier.jar" id="org.eclipse.gef.geometry" version="5.0.1.qualifier">
+   <feature id="org.eclipse.gef.geometry" version="0.0.0">
       <category name="GEF Geometry"/>
    </feature>
-   <feature url="features/org.eclipse.gef.geometry.convert.fx_5.0.0.qualifier.jar" id="org.eclipse.gef.geometry.convert.fx" version="5.0.0.qualifier">
+   <feature id="org.eclipse.gef.geometry.convert.fx" version="0.0.0">
       <category name="GEF Geometry"/>
    </feature>
-   <feature url="features/org.eclipse.gef.geometry.convert.swt_5.0.2.qualifier.jar" id="org.eclipse.gef.geometry.convert.swt" version="5.0.2.qualifier">
+   <feature id="org.eclipse.gef.geometry.convert.swt" version="0.0.0">
       <category name="GEF Geometry"/>
    </feature>
-   <feature url="features/org.eclipse.gef.geometry.doc_5.0.3.qualifier.jar" id="org.eclipse.gef.geometry.doc" version="5.0.3.qualifier">
+   <feature id="org.eclipse.gef.geometry.doc" version="0.0.0">
       <category name="GEF Geometry"/>
    </feature>
-   <feature url="features/org.eclipse.gef.geometry.sdk_5.0.3.qualifier.jar" id="org.eclipse.gef.geometry.sdk" version="5.0.3.qualifier">
+   <feature id="org.eclipse.gef.geometry.sdk" version="0.0.0">
       <category name="GEF Geometry"/>
    </feature>
-   <feature url="features/org.eclipse.gef.layout_5.0.0.qualifier.jar" id="org.eclipse.gef.layout" version="5.0.0.qualifier">
+   <feature id="org.eclipse.gef.layout" version="0.0.0">
       <category name="GEF Layout"/>
    </feature>
-   <feature url="features/org.eclipse.gef.layout.doc_5.0.0.qualifier.jar" id="org.eclipse.gef.layout.doc" version="5.0.0.qualifier">
+   <feature id="org.eclipse.gef.layout.doc" version="0.0.0">
       <category name="GEF Layout"/>
    </feature>
-   <feature url="features/org.eclipse.gef.layout.sdk_5.0.0.qualifier.jar" id="org.eclipse.gef.layout.sdk" version="5.0.0.qualifier">
+   <feature id="org.eclipse.gef.layout.sdk" version="0.0.0">
       <category name="GEF Layout"/>
    </feature>
-   <feature url="features/org.eclipse.gef.fx_5.0.5.qualifier.jar" id="org.eclipse.gef.fx" version="5.0.5.qualifier">
+   <feature id="org.eclipse.gef.fx" version="0.0.0">
       <category name="GEF FX"/>
    </feature>
-   <feature url="features/org.eclipse.gef.fx.swt_5.0.2.qualifier.jar" id="org.eclipse.gef.fx.swt" version="5.0.2.qualifier">
+   <feature id="org.eclipse.gef.fx.swt" version="0.0.0">
       <category name="GEF FX"/>
    </feature>
-   <feature url="features/org.eclipse.gef.fx.jface_5.0.2.qualifier.jar" id="org.eclipse.gef.fx.jface" version="5.0.2.qualifier">
+   <feature id="org.eclipse.gef.fx.jface" version="0.0.0">
       <category name="GEF FX"/>
    </feature>
-   <feature url="features/org.eclipse.gef.fx.doc_5.0.5.qualifier.jar" id="org.eclipse.gef.fx.doc" version="5.0.5.qualifier">
+   <feature id="org.eclipse.gef.fx.doc" version="0.0.0">
       <category name="GEF FX"/>
    </feature>
-   <feature url="features/org.eclipse.gef.fx.sdk_5.0.5.qualifier.jar" id="org.eclipse.gef.fx.sdk" version="5.0.5.qualifier">
+   <feature id="org.eclipse.gef.fx.sdk" version="0.0.0">
       <category name="GEF FX"/>
    </feature>
-   <feature url="features/org.eclipse.gef.graph_5.1.0.qualifier.jar" id="org.eclipse.gef.graph" version="5.1.0.qualifier">
+   <feature id="org.eclipse.gef.graph" version="0.0.0">
       <category name="GEF Graph"/>
    </feature>
-   <feature url="features/org.eclipse.gef.graph.doc_5.1.0.qualifier.jar" id="org.eclipse.gef.graph.doc" version="5.1.0.qualifier">
+   <feature id="org.eclipse.gef.graph.doc" version="0.0.0">
       <category name="GEF Graph"/>
    </feature>
-   <feature url="features/org.eclipse.gef.graph.sdk_5.1.0.qualifier.jar" id="org.eclipse.gef.graph.sdk" version="5.1.0.qualifier">
+   <feature id="org.eclipse.gef.graph.sdk" version="0.0.0">
       <category name="GEF Graph"/>
    </feature>
-   <feature url="features/org.eclipse.gef.mvc.fx_5.2.4.qualifier.jar" id="org.eclipse.gef.mvc.fx" version="5.2.4.qualifier">
+   <feature id="org.eclipse.gef.mvc.fx" version="0.0.0">
       <category name="GEF MVC"/>
    </feature>
-   <feature url="features/org.eclipse.gef.mvc.fx.ui_5.1.2.qualifier.jar" id="org.eclipse.gef.mvc.fx.ui" version="5.1.2.qualifier">
+   <feature id="org.eclipse.gef.mvc.fx.ui" version="0.0.0">
       <category name="GEF MVC"/>
    </feature>
-   <feature url="features/org.eclipse.gef.mvc.doc_5.2.3.qualifier.jar" id="org.eclipse.gef.mvc.doc" version="5.2.3.qualifier">
+   <feature id="org.eclipse.gef.mvc.doc" version="0.0.0">
       <category name="GEF MVC"/>
    </feature>
-   <feature url="features/org.eclipse.gef.mvc.sdk_5.2.3.qualifier.jar" id="org.eclipse.gef.mvc.sdk" version="5.2.3.qualifier">
+   <feature id="org.eclipse.gef.mvc.sdk" version="0.0.0">
       <category name="GEF MVC"/>
    </feature>
-   <feature url="features/org.eclipse.gef.mvc.examples.source_5.2.4.qualifier.jar" id="org.eclipse.gef.mvc.examples.source" version="5.2.4.qualifier">
+   <feature id="org.eclipse.gef.mvc.examples.source" version="0.0.0">
       <category name="GEF MVC"/>
    </feature>
-   <feature url="features/org.eclipse.gef.zest.fx.jface_5.1.2.qualifier.jar" id="org.eclipse.gef.zest.fx.jface" version="5.1.2.qualifier">
+   <feature id="org.eclipse.gef.zest.fx.jface" version="0.0.0">
       <category name="GEF Zest"/>
    </feature>
-   <feature url="features/org.eclipse.gef.zest.fx.ui_5.0.4.qualifier.jar" id="org.eclipse.gef.zest.fx.ui" version="5.0.4.qualifier">
+   <feature id="org.eclipse.gef.zest.fx.ui" version="0.0.0">
       <category name="GEF Zest"/>
    </feature>
-   <feature url="features/org.eclipse.gef.zest.doc_5.1.2.qualifier.jar" id="org.eclipse.gef.zest.doc" version="5.1.2.qualifier">
+   <feature id="org.eclipse.gef.zest.doc" version="0.0.0">
       <category name="GEF Zest"/>
    </feature>
-   <feature url="features/org.eclipse.gef.zest.sdk_5.1.2.qualifier.jar" id="org.eclipse.gef.zest.sdk" version="5.1.2.qualifier">
+   <feature id="org.eclipse.gef.zest.sdk" version="0.0.0">
       <category name="GEF Zest"/>
    </feature>
-   <feature url="features/org.eclipse.gef.zest.fx_5.1.3.qualifier.jar" id="org.eclipse.gef.zest.fx" version="5.1.3.qualifier">
+   <feature id="org.eclipse.gef.zest.fx" version="0.0.0">
       <category name="GEF Zest"/>
    </feature>
-   <feature url="features/org.eclipse.gef.zest.examples.source_5.1.3.qualifier.jar" id="org.eclipse.gef.zest.examples.source" version="5.1.3.qualifier">
+   <feature id="org.eclipse.gef.zest.examples.source" version="0.0.0">
       <category name="GEF Zest"/>
    </feature>
-   <feature url="features/org.eclipse.gef.cloudio.ui_5.0.2.qualifier.jar" id="org.eclipse.gef.cloudio.ui" version="5.0.2.qualifier">
+   <feature id="org.eclipse.gef.cloudio.ui" version="0.0.0">
       <category name="GEF Cloudio"/>
    </feature>
-   <feature url="features/org.eclipse.gef.cloudio.doc_5.0.2.qualifier.jar" id="org.eclipse.gef.cloudio.doc" version="5.0.2.qualifier">
+   <feature id="org.eclipse.gef.cloudio.doc" version="0.0.0">
       <category name="GEF Cloudio"/>
    </feature>
-   <feature url="features/org.eclipse.gef.cloudio.doc.user_5.0.2.qualifier.jar" id="org.eclipse.gef.cloudio.doc.user" version="5.0.2.qualifier">
+   <feature id="org.eclipse.gef.cloudio.doc.user" version="0.0.0">
       <category name="GEF Cloudio"/>
    </feature>
-   <feature url="features/org.eclipse.gef.cloudio.sdk_5.0.2.qualifier.jar" id="org.eclipse.gef.cloudio.sdk" version="5.0.2.qualifier">
+   <feature id="org.eclipse.gef.cloudio.sdk" version="0.0.0">
       <category name="GEF Cloudio"/>
    </feature>
-   <feature url="features/org.eclipse.gef.cloudio.user_5.0.2.qualifier.jar" id="org.eclipse.gef.cloudio.user" version="5.0.2.qualifier">
+   <feature id="org.eclipse.gef.cloudio.user" version="0.0.0">
       <category name="GEF Cloudio"/>
    </feature>
-   <feature url="features/org.eclipse.gef.dot_5.1.3.qualifier.jar" id="org.eclipse.gef.dot" version="5.1.3.qualifier">
+   <feature id="org.eclipse.gef.dot" version="0.0.0">
       <category name="GEF DOT"/>
    </feature>
-   <feature url="features/org.eclipse.gef.dot.ui_5.1.3.qualifier.jar" id="org.eclipse.gef.dot.ui" version="5.1.3.qualifier">
+   <feature id="org.eclipse.gef.dot.ui" version="0.0.0">
       <category name="GEF DOT"/>
    </feature>
-   <feature url="features/org.eclipse.gef.dot.doc_5.1.3.qualifier.jar" id="org.eclipse.gef.dot.doc" version="5.1.3.qualifier">
+   <feature id="org.eclipse.gef.dot.doc" version="0.0.0">
       <category name="GEF DOT"/>
    </feature>
-   <feature url="features/org.eclipse.gef.dot.doc.user_5.1.3.qualifier.jar" id="org.eclipse.gef.dot.doc.user" version="5.1.3.qualifier">
+   <feature id="org.eclipse.gef.dot.doc.user" version="0.0.0">
       <category name="GEF DOT"/>
    </feature>
-   <feature url="features/org.eclipse.gef.dot.sdk_5.1.3.qualifier.jar" id="org.eclipse.gef.dot.sdk" version="5.1.3.qualifier">
+   <feature id="org.eclipse.gef.dot.sdk" version="0.0.0">
       <category name="GEF DOT"/>
    </feature>
-   <feature url="features/org.eclipse.gef.dot.user_5.1.3.qualifier.jar" id="org.eclipse.gef.dot.user" version="5.1.3.qualifier">
+   <feature id="org.eclipse.gef.dot.user" version="0.0.0">
       <category name="GEF DOT"/>
    </feature>
-   <feature url="features/org.eclipse.gef.fx.compatibility.equinox_5.0.3.qualifier.jar" id="org.eclipse.gef.fx.compatibility.equinox" version="5.0.3.qualifier">
+   <feature id="org.eclipse.gef.fx.compatibility.equinox" version="0.0.0">
       <category name="Equinox Compatibility Patches (GEF FX, GEF MVC, GEF MVC.FX, GEF Zest.FX)"/>
    </feature>
-   <feature url="features/org.eclipse.gef.mvc.fx.compatibility.equinox_5.0.3.qualifier.jar" id="org.eclipse.gef.mvc.fx.compatibility.equinox" version="5.0.3.qualifier">
+   <feature id="org.eclipse.gef.mvc.fx.compatibility.equinox" version="0.0.0">
       <category name="Equinox Compatibility Patches (GEF FX, GEF MVC, GEF MVC.FX, GEF Zest.FX)"/>
    </feature>
-   <feature url="features/org.eclipse.gef.zest.fx.compatibility.equinox_5.0.3.qualifier.jar" id="org.eclipse.gef.zest.fx.compatibility.equinox" version="5.0.3.qualifier">
+   <feature id="org.eclipse.gef.zest.fx.compatibility.equinox" version="0.0.0">
       <category name="Equinox Compatibility Patches (GEF FX, GEF MVC, GEF MVC.FX, GEF Zest.FX)"/>
    </feature>
+   <feature id="org.eclipse.gef.sdk"/>
    <bundle id="com.google.guava"/>
    <bundle id="com.google.inject"/>
+   <bundle id="com.google.errorprone.annotations"/>
    <bundle id="com.google.inject.assistedinject"/>
    <category-def name="GEF Geometry" label="GEF Geometry"/>
    <category-def name="GEF FX" label="GEF FX"/>

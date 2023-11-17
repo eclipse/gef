@@ -50,21 +50,21 @@ class DotAttributeActiveAnnotationTest {
 			public class DotAttributes {
 			  public enum Context {
 			    GRAPH,
-			    
+			
 			    EDGE,
-			    
+			
 			    NODE,
-			    
+			
 			    SUBGRAPH,
-			    
+			
 			    CLUSTER;
 			  }
-			  
+			
 			  /**
 			   * The 'rank' attribute, which is used by: Subgraph.
 			   */
 			  public static final String RANK__S = "rank";
-			  
+			
 			  public static Object parsedAsAttribute(final ID valueRaw, final String attrName, final DotAttributes.Context context) {
 			    switch (context) {
 			    case GRAPH:
@@ -88,7 +88,7 @@ class DotAttributeActiveAnnotationTest {
 			      return valueRaw != null ? valueRaw.toValue() : null;
 			    }
 			  }
-			  
+			
 			  /**
 			   * Returns the (raw) value of the {@link #RANK__S} attribute of the given {@link Graph}.
 			   *     @param graph
@@ -101,7 +101,7 @@ class DotAttributeActiveAnnotationTest {
 			  public static ID getRankRaw(final Graph graph) {
 			    return (ID) graph.attributesProperty().get(RANK__S);
 			  }
-			  
+			
 			  /**
 			   * Sets the (raw) value of the {@link #RANK__S} attribute of the given {@link Graph}
 			   * to the given <i>rank</i> value.
@@ -118,7 +118,7 @@ class DotAttributeActiveAnnotationTest {
 			    checkAttributeRawValue(Context.GRAPH, RANK__S, rank);
 			    graph.attributesProperty().put(RANK__S, rank);
 			  }
-			  
+			
 			  /**
 			   * Returns the value of the {@link #RANK__S} attribute of the given {@link Graph}.
 			   *     @param graph
@@ -130,7 +130,7 @@ class DotAttributeActiveAnnotationTest {
 			    ID rankRaw = getRankRaw(graph);
 			    return rankRaw != null ? rankRaw.toValue() : null;
 			  }
-			  
+			
 			  /**
 			   * Sets the value of the {@link #RANK__S} attribute of the given {@link Graph} to the given <i>rank</i> value.
 			   *     @param graph
@@ -144,7 +144,7 @@ class DotAttributeActiveAnnotationTest {
 			  public static void setRank(final Graph graph, final String rank) {
 			    setRankRaw(graph, ID.fromValue(rank, org.eclipse.gef.dot.internal.language.terminals.ID.Type.STRING));
 			  }
-			  
+			
 			  /**
 			   * Returns the (parsed) value of the {@link #RANK__S} attribute of the given {@link Graph}.
 			   *     @param graph
@@ -155,7 +155,7 @@ class DotAttributeActiveAnnotationTest {
 			  public static RankType getRankParsed(final Graph graph) {
 			    return parseAttributeValue(RANKTYPE_PARSER, getRank(graph));
 			  }
-			  
+			
 			  /**
 			   * Sets the (parsed) value of the {@link #RANK__S} attribute of the given {@link Graph} to the given <i>rank</i> value.
 			   *     @param graph

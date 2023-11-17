@@ -13,7 +13,7 @@
 <feature
       id="org.eclipse.gef.zest.fx.jface"
       label="GEF Zest.FX.JFace"
-      version="5.1.2.qualifier"
+      version="5.1.3.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.zest.fx.jface"
       license-feature="org.eclipse.license"
@@ -33,7 +33,7 @@
 
    <requires>
       <import plugin="com.google.guava" version="12.0.0" match="greaterOrEqual"/>
-      <import plugin="com.google.inject" version="5.0.0" match="compatible"/>
+      <import plugin="com.google.inject" version="7.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.common" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.fx" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.fx.swt" version="5.0.0" match="compatible"/>

@@ -1,0 +1,215 @@
+pipeline {
+  agent {
+    label "centos-latest"
+  }
+
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '10'))
+    disableConcurrentBuilds()
+    checkoutToSubdirectory('gef')
+    skipDefaultCheckout true
+  }
+
+  tools {
+    maven 'apache-maven-latest'
+    jdk 'temurin-jdk17-latest'
+  }
+
+  environment {
+    BUILD_TIMESTAMP = sh(returnStdout: true, script: 'date +%Y%m%d%H%M').trim()
+    JAVAFX_VERSION = '17.0.9'
+  }
+
+  parameters {
+    choice(
+      name: 'BUILD_TYPE',
+      choices: ['nightly', 'milestone', 'release'],
+      description: '''
+        Choose the type of build.
+        Note that a release build will <b>not</b> promote the build, but rather will promote the most recent milestone build.
+        '''
+    )
+
+    booleanParam(
+      name: 'ECLIPSE_SIGN',
+      defaultValue: true,
+      description: '''
+        Choose whether or not the bundles will be signed.
+        This is relevant only for nightly and milestone builds.
+      '''
+    )
+
+    booleanParam(
+      name: 'PROMOTE',
+      defaultValue: true,
+      description: 'Whether to promote the build to the download server.'
+    )
+  }
+
+  stages {
+    stage('Display Parameters') {
+      steps {
+        script {
+          env.BUILD_TYPE = params.BUILD_TYPE
+          if (env.BRANCH_NAME == 'master') {
+            // Only sign the master branch.
+            //
+            // TODO
+            // env.ECLIPSE_SIGN = params.ECLIPSE_SIGN
+          } else {
+            // Do not sign PR builds.
+            //
+            // TODO
+            // env.ECLIPSE_SIGN =  false
+          }
+
+          // Only promote signed builds, i.e., do not sign or promote PR builds.
+          //
+          env.PROMOTE = params.PROMOTE && (env.ECLIPSE_SIGN == 'true')
+        }
+        echo """
+BUILD_TIMESTAMP=${env.BUILD_TIMESTAMP}
+BUILD_TYPE=${env.BUILD_TYPE}
+ECLIPSE_SIGN=${env.ECLIPSE_SIGN}
+PROMOTE=${env.PROMOTE}
+BRANCH_NAME=${env.BRANCH_NAME}
+"""
+      }
+    }
+ 
+    stage('Git Checkout') {
+      steps {
+        script {
+          if (true) {
+            def gitVariables = checkout(
+              poll: false,
+              scm: [
+                $class: 'GitSCM',
+                branches: [[name: '*/issue-108']],
+                doGenerateSubmoduleConfigurations: false,
+                submoduleCfg: [],
+                extensions: [
+                  [$class: 'RelativeTargetDirectory', relativeTargetDir: 'gef/']
+                ],
+                userRemoteConfigs: [[url: 'https://github.com/merks/gef.git' ]]
+              ]
+            )
+  
+            echo "$gitVariables"
+            env.GIT_COMMIT = gitVariables.GIT_COMMIT
+          }
+
+          def gitVariablesWiki = checkout(
+            poll: false,
+            scm: [
+              $class: 'GitSCM',
+              branches: [[name: '*/master']],
+              doGenerateSubmoduleConfigurations: false,
+              submoduleCfg: [],
+              extensions: [
+                [$class: 'RelativeTargetDirectory', relativeTargetDir: 'gef.wiki/']
+              ],
+              userRemoteConfigs: [[url: 'https://github.com/eclipse/gef.wiki.git' ]]
+            ]
+          )
+        }
+      }
+    }
+
+    stage('Fetch JavaFX') {
+      steps {
+        sh '''
+          set -x
+          mkdir javafx
+          cd javafx
+          curl -o openjfx-${JAVAFX_VERSION}_linux-x64_bin-sdk.zip https://download2.gluonhq.com/openjfx/${JAVAFX_VERSION}/openjfx-${JAVAFX_VERSION}_linux-x64_bin-sdk.zip
+          unzip openjfx-${JAVAFX_VERSION}_linux-x64_bin-sdk.zip
+        '''
+      }
+    }
+
+    stage('Build GEF') {
+      steps {
+        script {
+          if (env.PROMOTE == 'true') {
+            // Only provide an agent context, which allows uploading to download.eclipse.org if we are promoting.
+            // PR builds are not permitted to promote.
+            //
+            sshagent(['projects-storage.eclipse.org-bot-ssh']) {
+              mvn()
+            }
+          } else {
+            mvn()
+            archiveArtifacts 'gef/org.eclipse.gef.repository/**'
+          }
+        }
+      }
+    }
+
+/*
+    stage('Repackage Results') {
+      steps {
+        sh '''
+          set -x
+          mkdir update-site
+          cp -R gef/org.eclipse.gef.repository/target/repository/* update-site/
+          mkdir org.eclipse.gef.mvc.examples.logo.web-files
+          cp -R gef/org.eclipse.gef.mvc.examples.logo.web.repository/target/web-files/* org.eclipse.gef.mvc.examples.logo.web-files/
+        '''
+      }
+    }
+*/
+  }
+
+  post {
+    always {
+      junit allowEmptyResults: true, testResults: '**/TEST-*.xml'
+    }
+
+    failure {
+      archiveArtifacts '**'
+      mail to: 'ed.merks@gmail.com',
+      subject: "[GEF CI] Build Failure ${currentBuild.fullDisplayName}",
+      mimeType: 'text/html',
+      body: "Project: ${env.JOB_NAME}<br/>Build Number: ${env.BUILD_NUMBER}<br/>Build URL: ${env.BUILD_URL}<br/>Console: ${env.BUILD_URL}/console"
+    }
+
+    fixed {
+      mail to: 'ed.merks@gmail.com',
+      subject: "[GEF CI] Back to normal ${currentBuild.fullDisplayName}",
+      mimeType: 'text/html',
+      body: "Project: ${env.JOB_NAME}<br/>Build Number: ${env.BUILD_NUMBER}<br/>Build URL: ${env.BUILD_URL}<br/>Console: ${env.BUILD_URL}/console"
+    }
+
+    cleanup {
+      deleteDir()
+    }
+  }
+}
+
+def void mvn() {
+  wrap([$class: 'Xvnc', useXauthority: true]) {
+    dir('gef/org.eclipse.gef.releng') {
+      // Only promoted builds will be signed.
+      //
+      sh '''
+        if [[ $PROMOTE == true ]]; then
+          promotion_argument='-Ppromote -Psign'
+        fi
+        mvn \
+          -s settings.xml \
+          --no-transfer-progress \
+          $promotion_argument \
+          -P2023-12.target \
+          -Dwikidoc.skip=false \
+          -Dbuild.id=${BUILD_TIMESTAMP} \
+          -Dcommit.id=$GIT_COMMIT \
+          -Dbuild.type=$BUILD_TYPE \
+          -Dorg.eclipse.justj.p2.manager.build.url=$JOB_URL \
+          -Denv.JAVAFX_HOME=$WORKSPACE/javafx/javafx-sdk-${JAVAFX_VERSION} \
+          clean \
+          verify
+        '''
+    }
+  }
+}

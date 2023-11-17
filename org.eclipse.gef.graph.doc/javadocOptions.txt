@@ -11,6 +11,6 @@
 -doctitle "GEF Graph API Reference"
 -header "<b>GEF Graph</b><br>@build@"
 -bottom "Copyright (c) 2014 itemis AG and others. All rights reserved."
--link http://docs.oracle.com/javase/8/docs/api/
+-link https://docs.oracle.com/javase/8/docs/api/
 
 org.eclipse.gef.graph

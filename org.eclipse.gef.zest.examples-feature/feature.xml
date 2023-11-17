@@ -13,7 +13,7 @@
 <feature
       id="org.eclipse.gef.zest.examples"
       label="GEF Zest Examples"
-      version="5.1.3.qualifier"
+      version="5.1.4.qualifier"
       provider-name="Eclipse GEF"
       plugin="org.eclipse.gef.zest.examples"
       license-feature="org.eclipse.license"
@@ -44,7 +44,7 @@
       <import feature="org.eclipse.gef.zest.fx" version="5.0.0" match="compatible"/>
       <import feature="org.eclipse.gef.zest.fx.ui" version="5.0.0" match="compatible"/>
       <import plugin="com.google.guava" version="12.0.0" match="greaterOrEqual"/>
-      <import plugin="com.google.inject" version="5.0.0" match="compatible"/>
+      <import plugin="com.google.inject" version="7.0.0" match="compatible"/>
    </requires>
 
    <plugin
