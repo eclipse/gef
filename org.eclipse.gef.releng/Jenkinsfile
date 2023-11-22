@@ -53,26 +53,26 @@ pipeline {
           if (env.BRANCH_NAME == 'master') {
             // Only sign the master branch.
             //
-            // TODO
-            // env.ECLIPSE_SIGN = params.ECLIPSE_SIGN
+            env.ECLIPSE_SIGN = params.ECLIPSE_SIGN
           } else {
             // Do not sign PR builds.
-            //
-            // TODO
-            // env.ECLIPSE_SIGN =  false
+            env.ECLIPSE_SIGN =  false
           }
 
           // Only promote signed builds, i.e., do not sign or promote PR builds.
           //
           env.PROMOTE = params.PROMOTE && (env.ECLIPSE_SIGN == 'true')
-        }
-        echo """
+
+          def description = """
 BUILD_TIMESTAMP=${env.BUILD_TIMESTAMP}
 BUILD_TYPE=${env.BUILD_TYPE}
 ECLIPSE_SIGN=${env.ECLIPSE_SIGN}
 PROMOTE=${env.PROMOTE}
 BRANCH_NAME=${env.BRANCH_NAME}
-"""
+""".trim()
+          echo description
+          currentBuild.description = description.replace("\n", "<br/>")
+        }
       }
     }
  
