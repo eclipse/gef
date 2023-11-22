@@ -7,7 +7,6 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '10'))
     disableConcurrentBuilds()
     checkoutToSubdirectory('gef')
-    skipDefaultCheckout true
   }
 
   tools {
@@ -80,7 +79,7 @@ BRANCH_NAME=${env.BRANCH_NAME}
     stage('Git Checkout') {
       steps {
         script {
-          if (true) {
+          if (false) {
             def gitVariables = checkout(
               poll: false,
               scm: [
