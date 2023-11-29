@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="Generated from GEF" sequenceNumber="11">
+<target name="Generated from GEF" sequenceNumber="12">
   <locations>
     <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
       <unit id="com.google.inject.assistedinject" version="0.0.0"/>
       <unit id="jakarta.annotation-api" version="1.3.5"/>
       <unit id="org.apache.commons.lang" version="0.0.0"/>
+      <unit id="org.apache.commons.logging" version="0.0.0"/>
       <unit id="org.eclipse.emf.sdk.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.fx.runtime.min.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.license.feature.group" version="0.0.0"/>
