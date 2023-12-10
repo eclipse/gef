@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="Generated from GEF" sequenceNumber="12">
+<target name="Generated from GEF" sequenceNumber="1">
   <locations>
     <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
       <unit id="com.google.inject.assistedinject" version="0.0.0"/>
@@ -13,13 +13,13 @@
       <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
       <repository location="https://download.eclipse.org/cbi/updates/license"/>
-      <repository location="https://download.eclipse.org/tools/orbit/simrel/orbit-aggregation/2023-12"/>
+      <repository location="https://download.eclipse.org/tools/orbit/simrel/orbit-aggregation/milestone/latest"/>
       <repository location="https://download.eclipse.org/efxclipse/runtime-released/3.9.0/site"/>
       <repository location="https://download.itemis.com/updates/releases/2.1.0"/>
       <repository location="https://download.eclipse.org/modeling/emf/emf/builds/milestone/latest"/>
       <repository location="https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.33.0"/>
       <repository location="https://download.eclipse.org/modeling/emft/mwe/updates/releases/2.16.0"/>
-      <repository location="https://download.eclipse.org/eclipse/updates/4.30/R-4.30-202312010110"/>
+      <repository location="https://download.eclipse.org/eclipse/updates/4.31-I-builds"/>
     </location>
   </locations>
 </target>
