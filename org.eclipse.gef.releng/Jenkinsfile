@@ -29,6 +29,15 @@ pipeline {
         '''
     )
 
+    choice(
+      name: 'TARGET_PLATFORM',
+      choices: [ '2024-03', '2023-12'],
+      description: '''
+        Choose the named target platform against which to compile and test.
+        This is relevant only for nightly and milestone builds.
+        '''
+    )
+
     booleanParam(
       name: 'ECLIPSE_SIGN',
       defaultValue: true,
@@ -63,9 +72,12 @@ pipeline {
           //
           env.PROMOTE = params.PROMOTE && (env.ECLIPSE_SIGN == 'true')
 
+          env.TARGET_PLATFORM = params.TARGET_PLATFORM
+
           def description = """
 BUILD_TIMESTAMP=${env.BUILD_TIMESTAMP}
 BUILD_TYPE=${env.BUILD_TYPE}
+TARGET_PLATFORM=${env.TARGET_PLATFORM}
 ECLIPSE_SIGN=${env.ECLIPSE_SIGN}
 PROMOTE=${env.PROMOTE}
 BRANCH_NAME=${env.BRANCH_NAME}
@@ -199,7 +211,7 @@ def void mvn() {
           -s settings.xml \
           --no-transfer-progress \
           $promotion_argument \
-          -P2023-12.target \
+          -Dtarget-platform=${TARGET_PLATFORM} \
           -Dwikidoc.skip=false \
           -Dbuild.id=${BUILD_TIMESTAMP} \
           -Dcommit.id=$GIT_COMMIT \
