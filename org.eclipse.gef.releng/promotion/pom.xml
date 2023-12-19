@@ -27,7 +27,7 @@ SPDX-License-Identifier: EPL-2.0
   <packaging>pom</packaging>
 
   <properties>
-    <eclipse.repo>https://download.eclipse.org/releases/2023-09</eclipse.repo>
+    <eclipse.repo>https://download.eclipse.org/releases/latest</eclipse.repo>
     <justj.tools.repo>https://download.eclipse.org/justj/tools/updates/nightly/latest</justj.tools.repo>
     <org.eclipse.storage.user>genie.gef</org.eclipse.storage.user>
     <org.eclipse.justj.p2.manager.target>tools/gef</org.eclipse.justj.p2.manager.target>
