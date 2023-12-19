@@ -4,7 +4,11 @@ This guide provides all necessary information to enable [contributors and commit
 
 ## Set up a development environment
 
-If you want to contribute fixes to our code base, you will need to set up a proper development environment first, as outlined in the following sub-sections. Having forked the repository, this will enable you to work on an acceptable pull request, which has to respect certain formal contrainsts.
+You can set up a pre-configured IDE for the development of GEF FX using the following link:
+
+[![Create Eclipse Development Environment for GEF Classic](https://download.eclipse.org/oomph/www/setups/svg/GEF_FX.svg)](https://www.eclipse.org/setups/installer/?url=https://raw.githubusercontent.com/eclipse/gef/master/org.eclipse.gef.releng/GEFConfiguration.setup&show=true "Click to open Eclipse-Installer Auto Launch or drag onto your running installer's title area")
+
+This automates all the steps below, many of which are outdated.
 
 ### Install JDK 11 / OpenJFX 11
 
