@@ -229,7 +229,7 @@ public class CloudOptionsComposite extends Composite {
 
 	protected Image createImageFromColor(RGB rgb, int size) {
 		Image image;
-		Color color = new Color(Display.getDefault(), rgb);
+		Color color = new Color(rgb);
 		image = new Image(Display.getDefault(), size, size);
 		GC gc = new GC(image);
 		gc.setBackground(color);
@@ -355,7 +355,7 @@ public class CloudOptionsComposite extends Composite {
 				if (color == null)
 					return;
 				Color old = viewer.getCloud().getBackground();
-				Color c = new Color(Display.getDefault(), color);
+				Color c = new Color(color);
 				viewer.getCloud().setBackground(c);
 				old.dispose();
 				viewer.getCloud().redrawTextLayerImage();
@@ -382,7 +382,7 @@ public class CloudOptionsComposite extends Composite {
 				if (color == null)
 					return;
 				Color old = viewer.getCloud().getSelectionColor();
-				Color c = new Color(Display.getDefault(), color);
+				Color c = new Color(color);
 				viewer.getCloud().setSelectionColor(c);
 				old.dispose();
 				viewer.getCloud().redrawTextLayerImage();

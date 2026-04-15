@@ -120,8 +120,8 @@ class DotHtmlLabelIndentationHighlightingTest extends AbstractHighlightingTest {
 		int foregroundR, int foregroundG, int foregroundB, 
 		int backgroundR, int backgroundG, int backgroundB) {
 
-		val expectedForegroundColor = new Color(null, foregroundR, foregroundG, foregroundB)
-		val expectedBackgroundColor = new Color(null, backgroundR, backgroundG, backgroundB)
+		val expectedForegroundColor = new Color(foregroundR, foregroundG, foregroundB)
+		val expectedBackgroundColor = new Color(backgroundR, backgroundG, backgroundB)
 
 		for(highlightingRegion : highlightingRegions) {
 			val offset = highlightingRegion.offset

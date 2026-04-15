@@ -135,7 +135,7 @@ public class TypeLabelProvider extends BaseLabelProvider implements IEditableClo
 		colorList.clear();
 		colors.clear();
 		for (RGB color : newColors) {
-			Color c = new Color(Display.getDefault(), color);
+			Color c = new Color(color);
 			colorList.add(c);
 		}
 	}

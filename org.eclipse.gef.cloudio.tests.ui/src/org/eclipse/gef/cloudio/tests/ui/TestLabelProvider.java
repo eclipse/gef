@@ -23,7 +23,7 @@ public class TestLabelProvider extends BaseLabelProvider implements ICloudLabelP
 
 	public static final double WEIGHT = 0.987D;
 	public static final float ANGLE = 12.34F;
-	public static Color COLOR = new Color(Display.getDefault(), new RGB(100, 100, 100));
+	public static Color COLOR = new Color(new RGB(100, 100, 100));
 	public static FontData[] FONT_DATA = Display.getDefault().getShells()[0].getFont().getFontData();
 
 	public String getLabel(Object element) {
